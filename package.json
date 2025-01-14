@@ -1,6 +1,6 @@
 {
   "name": "nextjs-debug-suite",
-  "version": "0.1.0-beta.4",
+  "version": "0.1.0",
   "description": "Ultimate Next.js AI-Powered Debug Suite with visual interface and error DNA system",
   "type": "module",
   "main": "dist/index.js",
