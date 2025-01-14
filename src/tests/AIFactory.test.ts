@@ -1,4 +1,4 @@
-you known what is import { AIServiceFactory, AIServiceManager } from '../ai/factory';
+import { AIServiceFactory, AIServiceManager } from '../ai/factory';
 import { OpenAIService } from '../ai/openai';
 import { AnthropicService } from '../ai/anthropic';
 import type { AIConfig } from '../ai/types';
@@ -15,7 +15,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: false,
       provider: 'openai',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     expect(AIServiceFactory.create(config)).toBeNull();
   });
@@ -24,7 +25,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'openai',
-      apiKey: ''
+      apiKey: '',
+      features: ['analysis', 'fixes']
     };
     expect(AIServiceFactory.create(config)).toBeNull();
   });
@@ -33,7 +35,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'openai',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     const service = AIServiceFactory.create(config);
     expect(service).toBeInstanceOf(OpenAIService);
@@ -43,7 +46,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'anthropic',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     const service = AIServiceFactory.create(config);
     expect(service).toBeInstanceOf(AnthropicService);
@@ -53,7 +57,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'custom',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     expect(AIServiceFactory.create(config)).toBeNull();
   });
@@ -62,7 +67,8 @@ describe('AIServiceFactory', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'unsupported' as any,
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     expect(() => AIServiceFactory.create(config)).toThrow('Unsupported AI provider: unsupported');
   });
@@ -86,7 +92,8 @@ describe('AIServiceManager', () => {
     const config: AIConfig = {
       enabled: true,
       provider: 'openai',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     
     manager.initialize(config);
@@ -99,7 +106,8 @@ describe('AIServiceManager', () => {
     const config: AIConfig = {
       enabled: false,
       provider: 'openai',
-      apiKey: 'test-key'
+      apiKey: 'test-key',
+      features: ['analysis', 'fixes']
     };
     
     manager.initialize(config);
