@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { NetworkVisualizer } from '../components/network/NetworkVisualizer';
-import { DebugSuiteProvider } from '../components/DebugSuiteProvider';
+import { useDebugContext } from '../components/DebugSuiteProvider';
 import { NetworkRequest } from '../core/networkMonitor';
 import { lightTheme } from '../components/styles/theme';
 
@@ -41,20 +41,21 @@ const mockRequests: NetworkRequest[] = [
   },
 ];
 
-jest.mock('../core/networkMonitor', () => ({
-  NetworkMonitor: jest.fn().mockImplementation(() => ({
-    getRequests: () => mockRequests,
-    getFailedRequests: () => mockRequests.filter(req => req.error || (req.status && req.status >= 400)),
-    getSlowRequests: () => mockRequests.filter(req => req.duration && req.duration > 1000),
-  })),
+// Mock useDebugContext hook
+jest.mock('../components/DebugSuiteProvider', () => ({
+  useDebugContext: () => ({
+    network: {
+      getRequests: () => mockRequests,
+      getFailedRequests: () => mockRequests.filter(req => req.error || (req.status && req.status >= 400)),
+      getSlowRequests: () => mockRequests.filter(req => req.duration && req.duration > 1000),
+    }
+  })
 }));
 
 const renderNetworkVisualizer = () => {
   return render(
     <ThemeProvider theme={lightTheme}>
-      <DebugSuiteProvider>
-        <NetworkVisualizer />
-      </DebugSuiteProvider>
+      <NetworkVisualizer />
     </ThemeProvider>
   );
 };

@@ -155,7 +155,8 @@ describe('RequestDetails', () => {
 
     renderRequestDetails(minimalRequest);
 
-    expect(screen.getByText('N/A')).toBeInTheDocument(); // Duration
+    const naValues = screen.getAllByText('N/A');
+    expect(naValues).toHaveLength(2); // Duration and Size
     expect(screen.getByText('Pending')).toBeInTheDocument(); // Status
     expect(screen.queryByText('Request Headers')).not.toBeInTheDocument();
     expect(screen.queryByText('Response Headers')).not.toBeInTheDocument();

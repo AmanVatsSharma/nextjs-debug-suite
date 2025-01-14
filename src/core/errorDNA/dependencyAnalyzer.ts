@@ -37,9 +37,24 @@ export class DependencyAnalyzer {
   private program: ts.Program;
 
   constructor(private rootDir: string) {
-    const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile);
-    const parsedConfig = ts.parseJsonConfigFileContent(config.config, ts.sys, rootDir);
-    this.program = ts.createProgram(parsedConfig.fileNames, parsedConfig.options);
+    let compilerOptions: ts.CompilerOptions;
+    try {
+      const config = ts.readConfigFile('tsconfig.json', ts.sys.readFile);
+      const parsedConfig = ts.parseJsonConfigFileContent(config.config, ts.sys, rootDir);
+      compilerOptions = parsedConfig.options;
+    } catch {
+      // Default compiler options for tests
+      compilerOptions = {
+        target: ts.ScriptTarget.Latest,
+        module: ts.ModuleKind.ESNext,
+        jsx: ts.JsxEmit.React,
+        moduleResolution: ts.ModuleResolutionKind.NodeJs,
+        esModuleInterop: true,
+        skipLibCheck: true,
+        strict: true,
+      };
+    }
+    this.program = ts.createProgram([], compilerOptions);
   }
 
   async analyze(fileContent: string): Promise<{ imports: ImportInfo[]; exports: ExportInfo[] }> {

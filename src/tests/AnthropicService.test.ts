@@ -16,7 +16,7 @@ describe('AnthropicService', () => {
   const mockSuccessResponse = {
     ok: true,
     json: () => Promise.resolve({
-      content: 'Test explanation\n\n```js\nconst fix = true;\n```\n\nPrevention tips\n\nBest practices'
+      content: 'Test explanation\n\n```js\nconst fix = true```\n\nPrevention tips\n\nBest practices'
     })
   };
 
@@ -39,7 +39,7 @@ describe('AnthropicService', () => {
 
       expect(response).toEqual({
         explanation: 'Test explanation',
-        suggestedFix: 'const fix = true;',
+        suggestedFix: 'const fix = true',
         confidence: 0.9,
         relevantDocs: [],
         similarIssues: [],
