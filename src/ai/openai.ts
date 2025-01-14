@@ -3,7 +3,7 @@ import type { AIService, AIAnalysisRequest, AIAnalysisResponse } from './types';
 export class OpenAIService implements AIService {
   private apiKey: string;
   private baseUrl = 'https://api.openai.com/v1';
-  private model = 'gpt-4';
+  private model = 'gpt-4-turbo-preview';
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;

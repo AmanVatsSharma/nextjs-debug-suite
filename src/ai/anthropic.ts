@@ -3,7 +3,7 @@ import type { AIService, AIAnalysisRequest, AIAnalysisResponse } from './types';
 export class AnthropicService implements AIService {
   private apiKey: string;
   private baseUrl = 'https://api.anthropic.com/v1';
-  private model = 'claude-2';
+  private model = 'claude-3-opus-20240229';
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
