@@ -1,6 +1,6 @@
 {
   "name": "nextjs-debug-suite",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0-beta.3",
   "description": "Ultimate Next.js AI-Powered Debug Suite with visual interface and error DNA system",
   "type": "module",
   "main": "dist/index.js",
@@ -42,12 +42,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AmanVatsSharma/nextjs-debug-suite.git"
+    "url": "https://github.com/AmanVatsSharma/nextjs-debug-suite"
   },
   "bugs": {
     "url": "https://github.com/AmanVatsSharma/nextjs-debug-suite/issues"
   },
-  "homepage": "https://github.com/AmanVatsSharma/nextjs-debug-suite#readme",
+  "homepage": "https://github.com/AmanVatsSharma/nextjs-debug-suite",
   "license": "MIT",
   "peerDependencies": {
     "next": ">=13.0.0",
