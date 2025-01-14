@@ -36,18 +36,18 @@
     "state-debugging"
   ],
   "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com",
-    "url": "https://github.com/yourusername"
+    "name": "Aman Vats Sharma",
+    "email": "aman95026@gmail.com",
+    "url": "https://github.com/AmanVatsSharma"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/nextjs-debug-suite.git"
+    "url": "git+https://github.com/AmanVatsSharma/nextjs-debug-suite.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/nextjs-debug-suite/issues"
+    "url": "https://github.com/AmanVatsSharma/nextjs-debug-suite/issues"
   },
-  "homepage": "https://github.com/yourusername/nextjs-debug-suite#readme",
+  "homepage": "https://github.com/AmanVatsSharma/nextjs-debug-suite#readme",
   "license": "MIT",
   "peerDependencies": {
     "next": ">=13.0.0",

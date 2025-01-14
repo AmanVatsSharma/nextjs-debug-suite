@@ -4,8 +4,9 @@
 
 A comprehensive debugging and monitoring solution for Next.js applications, featuring AI-powered error analysis, performance monitoring, network tracking, and visual debugging tools.
 
-[![npm version](https://badge.fury.io/js/nextjs-debug-suite.svg)](https://badge.fury.io/js/nextjs-debug-suite)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/nextjs-debug-suite.svg)](https://www.npmjs.com/package/nextjs-debug-suite)
+[![GitHub](https://img.shields.io/github/license/AmanVatsSharma/nextjs-debug-suite)](https://github.com/AmanVatsSharma/nextjs-debug-suite/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/AmanVatsSharma/nextjs-debug-suite)](https://github.com/AmanVatsSharma/nextjs-debug-suite/issues)
 
 ## Features 🚀
 
@@ -156,11 +157,18 @@ See [Configuration Guide](./docs/configuration.md) for detailed configuration op
 
 ## Contributing 🤝
 
-We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
+Please read our [Contributing Guide](https://github.com/AmanVatsSharma/nextjs-debug-suite/blob/main/CONTRIBUTING.md) before submitting a Pull Request to the project.
 
 ## License 📄
 
 MIT © [Your Name/Organization]
+
+## Support 💬
+
+If you have any questions or need help with setup, feel free to:
+
+- [Open an issue](https://github.com/AmanVatsSharma/nextjs-debug-suite/issues)
+- [Start a discussion](https://github.com/AmanVatsSharma/nextjs-debug-suite/discussions)
 
 ## Support 💬
 
