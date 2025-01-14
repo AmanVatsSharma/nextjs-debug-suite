@@ -2,7 +2,7 @@ import { __awaiter, __generator } from "tslib";
 var AnthropicService = /** @class */ (function () {
     function AnthropicService(apiKey) {
         this.baseUrl = 'https://api.anthropic.com/v1';
-        this.model = 'claude-2';
+        this.model = 'claude-3-opus-20240229';
         this.apiKey = apiKey;
     }
     AnthropicService.prototype.makeRequest = function (endpoint, body) {

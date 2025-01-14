@@ -2,7 +2,7 @@ import { __awaiter, __generator } from "tslib";
 var OpenAIService = /** @class */ (function () {
     function OpenAIService(apiKey) {
         this.baseUrl = 'https://api.openai.com/v1';
-        this.model = 'gpt-4';
+        this.model = 'gpt-4-turbo-preview';
         this.apiKey = apiKey;
     }
     OpenAIService.prototype.makeRequest = function (endpoint, body) {

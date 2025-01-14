@@ -1,10 +1,10 @@
 # Next.js Debug Suite 🔍
 
-> **Beta Release Notice**: This is a beta version (0.1.0-beta.1) of the Next.js Debug Suite. While all core functionality is working and production-ready, we are currently improving our test coverage. Please report any issues you encounter.
+> **⚠️ Beta Release Notice**: This is a beta version (0.1.0-beta.1) of the Next.js Debug Suite. While the core functionality is production-ready, we are actively working on improving test coverage and stability. If you encounter any issues, please contact our support team through [GitHub Issues](https://github.com/AmanVatsSharma/nextjs-debug-suite/issues) or email at aman95026@gmail.com. Your feedback is valuable in making this package more robust.
 
 A comprehensive debugging and monitoring solution for Next.js applications, featuring AI-powered error analysis, performance monitoring, network tracking, and visual debugging tools.
 
-[![npm version](https://badge.fury.io/js/nextjs-debug-suite.svg)](https://www.npmjs.com/package/nextjs-debug-suite)
+[![npm version](https://badge.fury.io/js/next-debug-suite.svg)](https://www.npmjs.com/package/next-debug-suite)
 [![GitHub](https://img.shields.io/github/license/AmanVatsSharma/nextjs-debug-suite)](https://github.com/AmanVatsSharma/nextjs-debug-suite/blob/main/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/AmanVatsSharma/nextjs-debug-suite)](https://github.com/AmanVatsSharma/nextjs-debug-suite/issues)
 
@@ -22,13 +22,13 @@ A comprehensive debugging and monitoring solution for Next.js applications, feat
 
 ```bash
 # Using npm
-npm install nextjs-debug-suite
+npm install next-debug-suite@beta
 
 # Using yarn
-yarn add nextjs-debug-suite
+yarn add next-debug-suite@beta
 
 # Using pnpm
-pnpm add nextjs-debug-suite
+pnpm add next-debug-suite@beta
 ```
 
 ## Quick Start 🚀
