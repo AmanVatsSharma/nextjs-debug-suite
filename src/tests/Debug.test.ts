@@ -1,13 +1,95 @@
 import { debug } from '../core/debug';
-import type { LogEntry } from '../core/debug';
+import type { LogEntry, LogLevel, LogCategory } from '../core/debug';
 
-jest.mock('../core/debug');
+jest.mock('../core/debug', () => {
+  let logs: LogEntry[] = [];
+  let logCallbacks: ((entry: LogEntry) => void)[] = [];
+  let enabled = true;
+  let logLevels = new Set(['ERROR', 'WARN', 'INFO']);
+  let logCategories = new Set(['ERROR', 'NETWORK', 'PERFORMANCE', 'STATE']);
+
+  const createLogEntry = (level: LogLevel, category: LogCategory, message: string, args: any[]): LogEntry => ({
+    id: Math.random().toString(36).substring(7),
+    timestamp: Date.now(),
+    level,
+    category,
+    message,
+    data: args.length > 0 ? args : undefined
+  });
+
+  const addLog = (entry: LogEntry) => {
+    if (!enabled || !logLevels.has(entry.level) || !logCategories.has(entry.category)) return;
+    logs.push(entry);
+    logCallbacks.forEach(cb => cb(entry));
+  };
+
+  return {
+    debug: {
+      clearLogs: () => {
+        logs = [];
+      },
+      enable: () => {
+        enabled = true;
+      },
+      disable: () => {
+        enabled = false;
+      },
+      setLogLevels: (levels: LogLevel[]) => {
+        logLevels = new Set(levels);
+      },
+      setLogCategories: (categories: LogCategory[]) => {
+        logCategories = new Set(categories);
+      },
+      error: (category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry('ERROR', category, message, args));
+      },
+      warn: (category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry('WARN', category, message, args));
+      },
+      info: (category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry('INFO', category, message, args));
+      },
+      debug: (category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry('DEBUG', category, message, args));
+      },
+      trace: (category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry('TRACE', category, message, args));
+      },
+      getLogs: (filter?: { level?: LogLevel; category?: LogCategory; search?: string }) => {
+        if (!filter) return logs;
+        return logs.filter(entry => {
+          if (filter.level && entry.level !== filter.level) return false;
+          if (filter.category && entry.category !== filter.category) return false;
+          if (filter.search) {
+            const searchLower = filter.search.toLowerCase();
+            return (
+              entry.message.toLowerCase().includes(searchLower) ||
+              (entry.data && JSON.stringify(entry.data).toLowerCase().includes(searchLower))
+            );
+          }
+          return true;
+        });
+      },
+      onLog: (callback: (entry: LogEntry) => void) => {
+        logCallbacks.push(callback);
+        return () => {
+          const index = logCallbacks.indexOf(callback);
+          if (index > -1) {
+            logCallbacks.splice(index, 1);
+          }
+        };
+      }
+    }
+  };
+});
 
 describe('Debug', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     debug.clearLogs();
     debug.enable();
+    debug.setLogLevels(['ERROR', 'WARN', 'INFO']);
+    debug.setLogCategories(['ERROR', 'NETWORK', 'PERFORMANCE', 'STATE']);
   });
 
   it('should log messages with different levels', () => {

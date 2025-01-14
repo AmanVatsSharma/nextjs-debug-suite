@@ -79,6 +79,7 @@ export const DebugOverlay: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <OverlayContainer
+        data-testid="overlay-container"
         position={config.overlay.position}
         size={size}
         opacity={config.overlay.opacity}
@@ -95,6 +96,7 @@ export const DebugOverlay: React.FC = () => {
           {config.overlay.tabs.map(tab => (
             <Tab
               key={tab}
+              data-testid={`${tab}-tab`}
               active={activeTab === tab}
               onClick={() => setActiveTab(tab)}
             >

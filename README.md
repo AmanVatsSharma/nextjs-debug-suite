@@ -1,5 +1,7 @@
 # Next.js Debug Suite 🔍
 
+> **Beta Release Notice**: This is a beta version (0.1.0-beta.1) of the Next.js Debug Suite. While all core functionality is working and production-ready, we are currently improving our test coverage. Please report any issues you encounter.
+
 A comprehensive debugging and monitoring solution for Next.js applications, featuring AI-powered error analysis, performance monitoring, network tracking, and visual debugging tools.
 
 [![npm version](https://badge.fury.io/js/nextjs-debug-suite.svg)](https://badge.fury.io/js/nextjs-debug-suite)

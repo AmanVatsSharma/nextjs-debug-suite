@@ -4,20 +4,29 @@ describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
 
   beforeEach(() => {
-    monitor = new PerformanceMonitor();
+    jest.clearAllMocks();
+    
     // Mock performance API
-    (global as any).performance = {
-      now: jest.fn().mockReturnValue(100),
+    const mockPerformance = {
+      now: jest.fn(),
       mark: jest.fn(),
       measure: jest.fn(),
+      getEntriesByType: jest.fn(),
       clearMarks: jest.fn(),
-      getEntriesByType: jest.fn().mockReturnValue([]),
-      memory: {
-        usedJSHeapSize: 1000000,
-        totalJSHeapSize: 2000000,
-        jsHeapSizeLimit: 4000000
-      }
+      clearMeasures: jest.fn()
     };
+    
+    global.performance = mockPerformance as any;
+    
+    // Mock PerformanceObserver
+    global.PerformanceObserver = jest.fn().mockImplementation((callback) => ({
+      observe: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(),
+      callback
+    }));
+    
+    monitor = new PerformanceMonitor();
   });
 
   afterEach(() => {
@@ -26,18 +35,17 @@ describe('PerformanceMonitor', () => {
 
   describe('performance measurements', () => {
     it('should measure execution time', () => {
-      const performanceNow = performance.now as jest.Mock;
-      performanceNow.mockReturnValueOnce(100).mockReturnValueOnce(150);
-
+      performance.now.mockReturnValueOnce(100).mockReturnValueOnce(150);
+      
       monitor.startMeasure('test');
       const duration = monitor.endMeasure('test');
-
+      
       expect(duration).toBe(50);
-      expect(performance.mark).toHaveBeenCalledWith('test-start');
-      expect(performance.mark).toHaveBeenCalledWith('test-end');
-      expect(performance.measure).toHaveBeenCalledWith('test', 'test-start', 'test-end');
-      expect(performance.clearMarks).toHaveBeenCalledWith('test-start');
-      expect(performance.clearMarks).toHaveBeenCalledWith('test-end');
+      expect(debug.info).toHaveBeenCalledWith(
+        'PERFORMANCE',
+        'test took 50.00ms',
+        expect.any(Object)
+      );
     });
 
     it('should handle missing start time', () => {

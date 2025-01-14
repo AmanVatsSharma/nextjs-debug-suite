@@ -65,7 +65,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText(/Error: Test error/)).toBeInTheDocument();
+    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
   });
 
   it('calls static getDerivedStateFromError correctly', () => {
@@ -80,7 +80,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText(/Error: Test error/)).toBeInTheDocument();
+    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
   });
 
   it('allows error recovery', async () => {
@@ -90,20 +90,19 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText(/Error: Test error/)).toBeInTheDocument();
+    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
 
     // Rerender with non-throwing child
     await act(async () => {
       rerender(
-        <ThemeProvider theme={darkTheme}>
-          <ErrorBoundary>
-            <div>Recovered content</div>
-          </ErrorBoundary>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <div>Recovered content</div>
+        </ErrorBoundary>
       );
     });
 
-    expect(screen.getByText('Recovered content')).toBeInTheDocument();
+    // Wait for state update
+    await screen.findByText('Recovered content');
   });
 
   it('updates error state when new error occurs', async () => {
@@ -113,7 +112,7 @@ describe('ErrorBoundary', () => {
       </ErrorBoundary>
     );
 
-    expect(screen.getByText(/Error: Test error/)).toBeInTheDocument();
+    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
 
     // New error
     const NewError = () => {
@@ -123,14 +122,13 @@ describe('ErrorBoundary', () => {
 
     await act(async () => {
       rerender(
-        <ThemeProvider theme={darkTheme}>
-          <ErrorBoundary>
-            <NewError />
-          </ErrorBoundary>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <NewError />
+        </ErrorBoundary>
       );
     });
 
-    expect(screen.getByText(/Error: New test error/)).toBeInTheDocument();
+    // Wait for state update
+    await screen.findByText('Error: New test error');
   });
 }); 

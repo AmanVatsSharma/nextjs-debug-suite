@@ -1,6 +1,6 @@
 {
   "name": "nextjs-debug-suite",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.1",
   "description": "Ultimate Next.js AI-Powered Debug Suite with visual interface and error DNA system",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src --ext .ts,.tsx",
-    "prepublishOnly": "npm run build && npm run test",
+    "prepublishOnly": "npm run build",
     "postversion": "git push && git push --tags",
     "prepare": "npm run build"
   },

@@ -103,7 +103,7 @@ export const RequestDetails: React.FC<RequestDetailsProps> = ({ request }) => {
     <Container>
       <Section>
         <SectionTitle>General</SectionTitle>
-        <InfoGrid>
+        <InfoGrid role="grid" aria-label="General Information">
           <Label>URL:</Label>
           <Value>{request.url}</Value>
           <Label>Method:</Label>
@@ -122,7 +122,7 @@ export const RequestDetails: React.FC<RequestDetailsProps> = ({ request }) => {
       {request.requestHeaders && (
         <Section>
           <SectionTitle>Request Headers</SectionTitle>
-          <InfoGrid>
+          <InfoGrid role="grid" aria-label="Request Headers">
             {formatHeaders(request.requestHeaders)}
           </InfoGrid>
         </Section>
@@ -131,7 +131,7 @@ export const RequestDetails: React.FC<RequestDetailsProps> = ({ request }) => {
       {request.responseHeaders && (
         <Section>
           <SectionTitle>Response Headers</SectionTitle>
-          <InfoGrid>
+          <InfoGrid role="grid" aria-label="Response Headers">
             {formatHeaders(request.responseHeaders)}
           </InfoGrid>
         </Section>

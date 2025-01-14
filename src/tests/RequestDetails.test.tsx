@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { ThemeProvider } from '@emotion/react';
 import { RequestDetails } from '../components/network/RequestDetails';
 import { NetworkRequest } from '../core/networkMonitor';
@@ -61,64 +61,81 @@ describe('RequestDetails', () => {
   it('displays general request information', () => {
     renderRequestDetails(mockRequest);
 
-    expect(screen.getByText('General')).toBeInTheDocument();
-    expect(screen.getByText(mockRequest.url)).toBeInTheDocument();
-    expect(screen.getByText(mockRequest.method)).toBeInTheDocument();
-    expect(screen.getByText(mockRequest.status!.toString())).toBeInTheDocument();
-    expect(screen.getByText('200ms')).toBeInTheDocument();
-    expect(screen.getByText('1.0KB')).toBeInTheDocument();
-    expect(screen.getByText(mockRequest.initiator)).toBeInTheDocument();
+    const generalSection = screen.getByRole('heading', { name: /General/i }).parentElement!;
+    expect(generalSection).toBeInTheDocument();
+
+    const grid = within(generalSection).getByRole('grid');
+    expect(within(grid).getByText(mockRequest.url)).toBeInTheDocument();
+    expect(within(grid).getByText(mockRequest.method)).toBeInTheDocument();
+    expect(within(grid).getByText(mockRequest.status!.toString())).toBeInTheDocument();
+    expect(within(grid).getByText('200ms')).toBeInTheDocument();
+    expect(within(grid).getByText('1.0KB')).toBeInTheDocument();
+    expect(within(grid).getByText(mockRequest.initiator)).toBeInTheDocument();
   });
 
   it('displays request headers', () => {
     renderRequestDetails(mockRequest);
 
-    expect(screen.getByText('Request Headers')).toBeInTheDocument();
-    expect(screen.getByText('content-type:')).toBeInTheDocument();
-    expect(screen.getByText('application/json')).toBeInTheDocument();
-    expect(screen.getByText('authorization:')).toBeInTheDocument();
-    expect(screen.getByText('Bearer token')).toBeInTheDocument();
+    const headersSection = screen.getByRole('heading', { name: /Request Headers/i }).parentElement!;
+    expect(headersSection).toBeInTheDocument();
+
+    const grid = within(headersSection).getByRole('grid');
+    expect(within(grid).getByText(/^content-type:$/i)).toBeInTheDocument();
+    expect(within(grid).getByText('application/json')).toBeInTheDocument();
+    expect(within(grid).getByText(/^authorization:$/i)).toBeInTheDocument();
+    expect(within(grid).getByText('Bearer token')).toBeInTheDocument();
   });
 
   it('displays response headers', () => {
     renderRequestDetails(mockRequest);
 
-    expect(screen.getByText('Response Headers')).toBeInTheDocument();
-    expect(screen.getByText('content-type:')).toBeInTheDocument();
-    expect(screen.getByText('application/json')).toBeInTheDocument();
-    expect(screen.getByText('cache-control:')).toBeInTheDocument();
-    expect(screen.getByText('no-cache')).toBeInTheDocument();
+    const headersSection = screen.getByRole('heading', { name: /Response Headers/i }).parentElement!;
+    expect(headersSection).toBeInTheDocument();
+
+    const grid = within(headersSection).getByRole('grid');
+    expect(within(grid).getByText(/^content-type:$/i)).toBeInTheDocument();
+    expect(within(grid).getByText('application/json')).toBeInTheDocument();
+    expect(within(grid).getByText(/^cache-control:$/i)).toBeInTheDocument();
+    expect(within(grid).getByText('no-cache')).toBeInTheDocument();
   });
 
   it('displays request body', () => {
     renderRequestDetails(mockRequest);
 
-    expect(screen.getByText('Request Body')).toBeInTheDocument();
-    const requestBody = screen.getByText((content) => 
+    const bodySection = screen.getByRole('heading', { name: /Request Body/i }).parentElement!;
+    expect(bodySection).toBeInTheDocument();
+
+    const codeBlock = within(bodySection).getByText((content) => 
       content.includes('"name": "John Doe"') && 
-      content.includes('"email": "john@example.com"')
+      content.includes('"email": "john@example.com"') &&
+      !content.includes('"id"') // Ensure we're not matching response body
     );
-    expect(requestBody).toBeInTheDocument();
+    expect(codeBlock).toBeInTheDocument();
   });
 
   it('displays response body', () => {
     renderRequestDetails(mockRequest);
 
-    expect(screen.getByText('Response Body')).toBeInTheDocument();
-    const responseBody = screen.getByText((content) => 
+    const bodySection = screen.getByRole('heading', { name: /Response Body/i }).parentElement!;
+    expect(bodySection).toBeInTheDocument();
+
+    const codeBlock = within(bodySection).getByText((content) => 
       content.includes('"id": 123') && 
       content.includes('"name": "John Doe"') && 
       content.includes('"email": "john@example.com"') &&
       content.includes('"createdAt": "2023-01-01T00:00:00Z"')
     );
-    expect(responseBody).toBeInTheDocument();
+    expect(codeBlock).toBeInTheDocument();
   });
 
   it('displays error information for failed requests', () => {
     renderRequestDetails(mockErrorRequest);
 
-    expect(screen.getByText('Error')).toBeInTheDocument();
-    expect(screen.getByText('Resource not found')).toBeInTheDocument();
+    const errorSection = screen.getByRole('heading', { name: /Error/i }).parentElement!;
+    expect(errorSection).toBeInTheDocument();
+
+    const errorMessage = within(errorSection).getByText(/Resource not found/i);
+    expect(errorMessage).toBeInTheDocument();
   });
 
   it('formats request body as JSON when possible', () => {
@@ -128,10 +145,12 @@ describe('RequestDetails', () => {
     };
 
     renderRequestDetails(requestWithStringBody);
-    const requestBody = screen.getByText((content) => 
+    
+    const bodySection = screen.getByRole('heading', { name: /Request Body/i }).parentElement!;
+    const codeBlock = within(bodySection).getByText((content) => 
       content.includes('"test": "value"')
     );
-    expect(requestBody).toBeInTheDocument();
+    expect(codeBlock).toBeInTheDocument();
   });
 
   it('displays raw request body when not JSON', () => {
@@ -141,7 +160,9 @@ describe('RequestDetails', () => {
     };
 
     renderRequestDetails(requestWithRawBody);
-    expect(screen.getByText('plain text content')).toBeInTheDocument();
+    
+    const bodySection = screen.getByRole('heading', { name: /Request Body/i }).parentElement!;
+    expect(within(bodySection).getByText('plain text content')).toBeInTheDocument();
   });
 
   it('handles missing optional fields', () => {
@@ -155,12 +176,16 @@ describe('RequestDetails', () => {
 
     renderRequestDetails(minimalRequest);
 
-    const naValues = screen.getAllByText('N/A');
+    const generalSection = screen.getByRole('heading', { name: /General/i }).parentElement!;
+    const grid = within(generalSection).getByRole('grid');
+    
+    const naValues = within(grid).getAllByText('N/A');
     expect(naValues).toHaveLength(2); // Duration and Size
-    expect(screen.getByText('Pending')).toBeInTheDocument(); // Status
-    expect(screen.queryByText('Request Headers')).not.toBeInTheDocument();
-    expect(screen.queryByText('Response Headers')).not.toBeInTheDocument();
-    expect(screen.queryByText('Request Body')).not.toBeInTheDocument();
-    expect(screen.queryByText('Response Body')).not.toBeInTheDocument();
+    expect(within(grid).getByText('Pending')).toBeInTheDocument(); // Status
+    
+    expect(screen.queryByRole('heading', { name: /Request Headers/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Response Headers/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Request Body/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Response Body/i })).not.toBeInTheDocument();
   });
 }); 

@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { DebugOverlay } from '../components/DebugOverlay';
 import { useDebugContext } from '../components/DebugSuiteProvider';
 import { ThemeProvider } from '@emotion/react';
+import { darkTheme } from '../components/styles/theme';
 
 // Mock the context hook
 jest.mock('../components/DebugSuiteProvider', () => ({
@@ -21,11 +22,34 @@ jest.mock('react-icons/md', () => ({
   MdDragIndicator: () => <div data-testid="drag-indicator" />
 }));
 
+// Mock tab components
+jest.mock('../components/tabs/ErrorsTab', () => ({
+  ErrorsTab: () => <div data-testid="errors-content">Errors Content</div>
+}));
+
+jest.mock('../components/tabs/PerformanceTab', () => ({
+  PerformanceTab: () => <div data-testid="performance-content">Performance Content</div>
+}));
+
+jest.mock('../components/tabs/NetworkTab', () => ({
+  NetworkTab: () => <div data-testid="network-content">Network Content</div>
+}));
+
+jest.mock('../components/tabs/ConsoleTab', () => ({
+  ConsoleTab: () => <div data-testid="console-content">Console Content</div>
+}));
+
+jest.mock('../components/tabs/AITab', () => ({
+  AITab: () => <div data-testid="ai-content">AI Content</div>
+}));
+
 describe('DebugOverlay', () => {
+  const mockClearData = jest.fn();
+  const mockExportData = jest.fn();
   const mockConfig = {
     overlay: {
       tabs: ['errors', 'performance', 'network', 'console', 'ai'],
-      position: { x: 0, y: 0 },
+      position: 'top-right',
       size: { width: 400, height: 300 },
       opacity: 0.9,
       theme: 'dark'
@@ -33,12 +57,40 @@ describe('DebugOverlay', () => {
   };
 
   beforeEach(() => {
-    (useDebugContext as jest.Mock).mockReturnValue({ config: mockConfig });
+    // Mock URL.createObjectURL
+    URL.createObjectURL = jest.fn(() => 'mock-url');
+    URL.revokeObjectURL = jest.fn();
+    
+    // Mock document.createElement for the download link
+    const mockLink = {
+      href: '',
+      download: '',
+      click: jest.fn(),
+      remove: jest.fn()
+    };
+    document.createElement = jest.fn().mockReturnValue(mockLink);
+
+    (useDebugContext as jest.Mock).mockReturnValue({
+      config: mockConfig,
+      clearData: mockClearData,
+      exportData: mockExportData
+    });
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const renderDebugOverlay = () => {
+    return render(
+      <ThemeProvider theme={darkTheme}>
+        <DebugOverlay />
+      </ThemeProvider>
+    );
+  };
+
   it('renders all configured tabs', () => {
-    render(<DebugOverlay />);
-    
+    renderDebugOverlay();
     mockConfig.overlay.tabs.forEach(tab => {
       const tabElement = screen.getByText(tab.charAt(0).toUpperCase() + tab.slice(1));
       expect(tabElement).toBeInTheDocument();
@@ -46,32 +98,33 @@ describe('DebugOverlay', () => {
   });
 
   it('switches tab content when clicking different tabs', () => {
-    render(<DebugOverlay />);
+    renderDebugOverlay();
+    
+    // Initial tab should be errors
+    expect(screen.getByTestId('errors-content')).toBeInTheDocument();
     
     // Click Performance tab
     fireEvent.click(screen.getByText('Performance'));
-    expect(screen.getByTestId('performance-tab')).toBeInTheDocument();
+    expect(screen.getByTestId('performance-content')).toBeInTheDocument();
 
     // Click Network tab
     fireEvent.click(screen.getByText('Network'));
-    expect(screen.getByTestId('network-tab')).toBeInTheDocument();
+    expect(screen.getByTestId('network-content')).toBeInTheDocument();
   });
 
   it('renders action buttons', () => {
-    render(<DebugOverlay />);
-    
+    renderDebugOverlay();
     expect(screen.getByText('Clear')).toBeInTheDocument();
     expect(screen.getByText('Export')).toBeInTheDocument();
   });
 
   it('renders resize handle', () => {
-    render(<DebugOverlay />);
+    renderDebugOverlay();
     expect(screen.getByTestId('drag-indicator')).toBeInTheDocument();
   });
 
   it('applies correct initial size from config', () => {
-    render(<DebugOverlay />);
-    
+    renderDebugOverlay();
     const overlay = screen.getByTestId('overlay-container');
     expect(overlay).toHaveStyle({
       width: '400px',
@@ -80,38 +133,22 @@ describe('DebugOverlay', () => {
   });
 
   it('applies correct opacity from config', () => {
-    render(<DebugOverlay />);
-    
+    renderDebugOverlay();
     const overlay = screen.getByTestId('overlay-container');
     expect(overlay).toHaveStyle({
       opacity: '0.9'
     });
   });
 
-  // Add mock implementations for tab components
-  const mockTabComponents = () => {
-    jest.mock('../components/tabs/ErrorsTab', () => ({
-      ErrorsTab: () => <div data-testid="errors-tab">Errors Content</div>
-    }));
-    
-    jest.mock('../components/tabs/PerformanceTab', () => ({
-      PerformanceTab: () => <div data-testid="performance-tab">Performance Content</div>
-    }));
-    
-    jest.mock('../components/tabs/NetworkTab', () => ({
-      NetworkTab: () => <div data-testid="network-tab">Network Content</div>
-    }));
-    
-    jest.mock('../components/tabs/ConsoleTab', () => ({
-      ConsoleTab: () => <div data-testid="console-tab">Console Content</div>
-    }));
-    
-    jest.mock('../components/tabs/AITab', () => ({
-      AITab: () => <div data-testid="ai-tab">AI Content</div>
-    }));
-  };
+  it('calls clearData when Clear button is clicked', () => {
+    renderDebugOverlay();
+    fireEvent.click(screen.getByText('Clear'));
+    expect(mockClearData).toHaveBeenCalledWith('errors'); // Initial tab
+  });
 
-  beforeAll(() => {
-    mockTabComponents();
+  it('calls exportData when Export button is clicked', () => {
+    renderDebugOverlay();
+    fireEvent.click(screen.getByText('Export'));
+    expect(mockExportData).toHaveBeenCalledWith('errors'); // Initial tab
   });
 }); 
