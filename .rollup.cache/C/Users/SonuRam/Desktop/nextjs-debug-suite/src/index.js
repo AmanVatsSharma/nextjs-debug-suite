@@ -1,10 +1,8 @@
 export { DebugSuiteProvider } from './components/DebugSuiteProvider';
-export { useDebugger } from './hooks/useDebugger';
+export { useDebugContext } from './components/DebugSuiteProvider';
 export { debug } from './core/debug';
 // Re-export individual monitors
-export { PerformanceDebugMonitor } from './core/performanceDebug';
-export { NetworkDebugMonitor } from './core/networkDebug';
-export { StateDebugMonitor } from './core/stateDebug';
 export { PerformanceMonitor } from './core/performanceMonitor';
 export { NetworkMonitor } from './core/networkMonitor';
+export { StateDebugMonitor } from './core/stateDebug';
 //# sourceMappingURL=index.js.map
