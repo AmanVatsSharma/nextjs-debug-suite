@@ -87,7 +87,7 @@ export class ErrorDNAAnalyzer {
       }
     }
 
-    this.debug.log('ERROR', error.message, dna);
+    this.debug.log('ERROR', 'ERROR', error.message, dna);
     return dna;
   }
 

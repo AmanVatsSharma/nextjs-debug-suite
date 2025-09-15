@@ -11,6 +11,8 @@ export interface DependencyNode {
 export interface DependencyEdge {
   source: string;
   target: string;
+  from: string;
+  to: string;
   type: 'import' | 'export' | 'uses';
 }
 
@@ -161,6 +163,8 @@ export class DependencyAnalyzer {
           edges.push({
             source: fileId,
             target: targetId,
+            from: fileId,
+            to: targetId,
             type: 'import'
           });
 

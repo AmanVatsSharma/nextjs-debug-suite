@@ -5,6 +5,9 @@ interface DebugContextValue {
     data: DebugData;
     clearData: (tab: string) => void;
     exportData: (tab: string) => any;
+    debug: any;
+    network: any;
+    performance: any;
 }
 export declare const useDebugContext: () => DebugContextValue;
 interface DebugSuiteProviderProps {

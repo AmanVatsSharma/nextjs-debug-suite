@@ -93,7 +93,7 @@ Provide your response in this format:
     // Parse the structured response
     const sections = response.split('\n\n');
     const explanation = sections[0];
-    const suggestedFix = sections.find(section => section.includes('```'))
+    const suggestedFix = sections.find((section: string) => section.includes('```'))
       ?.match(/```[\s\S]*?```/)?.[0]
       ?.replace(/```\w*\n/, '')
       ?.replace(/```$/, '');
@@ -105,8 +105,8 @@ Provide your response in this format:
       relevantDocs: [],
       similarIssues: [],
       additionalContext: {
-        prevention: sections.find(s => s.toLowerCase().includes('prevent')),
-        bestPractices: sections.find(s => s.toLowerCase().includes('best practice')),
+        prevention: sections.find((s: string) => s.toLowerCase().includes('prevent')),
+        bestPractices: sections.find((s: string) => s.toLowerCase().includes('best practice')),
       },
     };
   }

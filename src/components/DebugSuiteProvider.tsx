@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { DebugConfig, DebugData } from '../types/debug';
+import { debug } from '../core/debug';
+import { NetworkMonitor } from '../core/networkMonitor';
+import { PerformanceMonitor } from '../core/performanceMonitor';
 
 interface DebugContextValue {
   config: DebugConfig;
   data: DebugData;
   clearData: (tab: string) => void;
   exportData: (tab: string) => any;
+  debug: any;
+  network: any;
+  performance: any;
 }
 
 const DebugContext = createContext<DebugContextValue | undefined>(undefined);
@@ -28,6 +34,8 @@ export const DebugSuiteProvider: React.FC<DebugSuiteProviderProps> = ({
   config: initialConfig,
 }) => {
   const [config] = useState(initialConfig);
+  const [networkMonitor] = useState(() => new NetworkMonitor());
+  const [performanceMonitor] = useState(() => new PerformanceMonitor());
   const [data, setData] = useState<DebugData>({
     errors: [],
     performance: {
@@ -109,7 +117,10 @@ export const DebugSuiteProvider: React.FC<DebugSuiteProviderProps> = ({
     config,
     data,
     clearData,
-    exportData
+    exportData,
+    debug,
+    network: networkMonitor,
+    performance: performanceMonitor
   };
 
   return (

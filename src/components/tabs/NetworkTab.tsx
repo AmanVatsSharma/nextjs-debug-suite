@@ -157,7 +157,7 @@ export const NetworkTab: React.FC = () => {
 
   useEffect(() => {
     // Subscribe to network events
-    const unsubscribe = network.debug.subscribe((log) => {
+    const unsubscribe = network.debug.subscribe((log: any) => {
       if (log.type === 'NETWORK' || log.type === 'NETWORK_ERROR') {
         setRequests(prev => [log.data as NetworkRequest, ...prev]);
       }

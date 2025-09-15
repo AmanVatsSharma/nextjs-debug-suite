@@ -24,19 +24,19 @@ describe('ErrorDNAGenerator', () => {
       const error = new Error('Test error');
       const mockStackTrace = {
         frames: [{
-          file: 'src/components/Button.tsx',
+          fileName: 'src/components/Button.tsx',
           lineNumber: 42,
-          column: 5,
-          methodName: 'onClick',
-          context: 'export class Button',
+          columnNumber: 5,
+          functionName: 'onClick',
+          source: 'export class Button',
         }],
         sourceCode: {
           'src/components/Button.tsx': ['line1', 'line2', 'line3'],
         },
       };
 
-      mockStackTraceParser.parse.mockResolvedValue(mockStackTrace);
-      mockDependencyAnalyzer.analyzeDependencies.mockResolvedValue({
+      mockStackTraceParser.parse.mockReturnValue(mockStackTrace.frames);
+      mockDependencyAnalyzer.getDependencyGraph.mockResolvedValue({
         nodes: [],
         edges: [],
       });
@@ -77,15 +77,15 @@ describe('ErrorDNAGenerator', () => {
       const error = new TypeError('Invalid type');
       const mockStackTrace = {
         frames: [{
-          file: 'src/utils/validation.ts',
+          fileName: 'src/utils/validation.ts',
           lineNumber: 15,
-          column: 3,
-          methodName: 'validateInput',
+          columnNumber: 3,
+          functionName: 'validateInput',
         }],
       };
 
-      mockStackTraceParser.parse.mockResolvedValue(mockStackTrace);
-      mockDependencyAnalyzer.analyzeDependencies.mockResolvedValue({
+      mockStackTraceParser.parse.mockReturnValue(mockStackTrace.frames);
+      mockDependencyAnalyzer.getDependencyGraph.mockResolvedValue({
         nodes: [],
         edges: [],
       });
@@ -96,10 +96,8 @@ describe('ErrorDNAGenerator', () => {
 
     it('handles missing stack trace gracefully', async () => {
       const error = new Error('No stack trace');
-      mockStackTraceParser.parse.mockResolvedValue({
-        frames: [],
-      });
-      mockDependencyAnalyzer.analyzeDependencies.mockResolvedValue({
+      mockStackTraceParser.parse.mockReturnValue([]);
+      mockDependencyAnalyzer.getDependencyGraph.mockResolvedValue({
         nodes: [],
         edges: [],
       });
@@ -117,8 +115,8 @@ describe('ErrorDNAGenerator', () => {
 
     it('handles parser errors gracefully', async () => {
       const error = new Error('Parser error');
-      mockStackTraceParser.parse.mockRejectedValue(new Error('Parse failed'));
-      mockDependencyAnalyzer.analyzeDependencies.mockResolvedValue({
+      mockStackTraceParser.parse.mockImplementation(() => { throw new Error('Parse failed'); });
+      mockDependencyAnalyzer.getDependencyGraph.mockResolvedValue({
         nodes: [],
         edges: [],
       });

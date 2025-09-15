@@ -7,9 +7,13 @@ export interface NetworkRequest {
     startTime: number;
     endTime?: number;
     duration?: number;
+    size?: number;
     headers?: Record<string, string>;
+    requestHeaders?: Record<string, string>;
+    responseHeaders?: Record<string, string>;
     requestBody?: any;
     responseBody?: any;
+    initiator?: string;
     error?: Error;
 }
 export declare class NetworkMonitor {

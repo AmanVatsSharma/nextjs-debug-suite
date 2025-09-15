@@ -1,9 +1,18 @@
 import { debug } from './debug';
 
-interface PerformanceMeasure {
+export interface PerformanceMeasure {
   name: string;
   startTime: number;
   duration: number;
+}
+
+export interface PerformanceMetric {
+  timestamp: number;
+  value: number;
+  type: string;
+  name?: string;
+  duration?: number;
+  details?: any;
 }
 
 interface PerformanceLog {

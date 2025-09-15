@@ -1,11 +1,11 @@
 import type { DebugInterface } from '../../core/types';
 export declare const OverlayContainer: import("@emotion/styled").StyledComponent<{
-    security?: string | undefined;
+    resource?: string | undefined;
     slot?: string | undefined;
     title?: string | undefined;
-    resource?: string | undefined;
     id?: string | undefined;
     onClick?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+    security?: string | undefined;
     defaultChecked?: boolean | undefined;
     defaultValue?: string | number | readonly string[] | undefined;
     suppressContentEditableWarning?: boolean | undefined;
@@ -49,6 +49,8 @@ export declare const OverlayContainer: import("@emotion/styled").StyledComponent
     unselectable?: "off" | "on" | undefined;
     inputMode?: "search" | "text" | "url" | "none" | "tel" | "email" | "numeric" | "decimal" | undefined;
     is?: string | undefined;
+    exportparts?: string | undefined;
+    part?: string | undefined;
     "aria-activedescendant"?: string | undefined;
     "aria-atomic"?: (boolean | "true" | "false") | undefined;
     "aria-autocomplete"?: "none" | "list" | "inline" | "both" | undefined;
@@ -61,12 +63,12 @@ export declare const OverlayContainer: import("@emotion/styled").StyledComponent
     "aria-colindextext"?: string | undefined;
     "aria-colspan"?: number | undefined;
     "aria-controls"?: string | undefined;
-    "aria-current"?: boolean | "time" | "location" | "true" | "false" | "page" | "step" | "date" | undefined;
+    "aria-current"?: boolean | "time" | "location" | "true" | "false" | "page" | "date" | "step" | undefined;
     "aria-describedby"?: string | undefined;
     "aria-description"?: string | undefined;
     "aria-details"?: string | undefined;
     "aria-disabled"?: (boolean | "true" | "false") | undefined;
-    "aria-dropeffect"?: "link" | "none" | "copy" | "execute" | "move" | "popup" | undefined;
+    "aria-dropeffect"?: "link" | "none" | "copy" | "move" | "execute" | "popup" | undefined;
     "aria-errormessage"?: string | undefined;
     "aria-expanded"?: (boolean | "true" | "false") | undefined;
     "aria-flowto"?: string | undefined;
@@ -123,7 +125,7 @@ export declare const OverlayContainer: import("@emotion/styled").StyledComponent
     onBlurCapture?: import("react").FocusEventHandler<HTMLDivElement> | undefined;
     onChange?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onChangeCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
-    onBeforeInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+    onBeforeInput?: import("react").InputEventHandler<HTMLDivElement> | undefined;
     onBeforeInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
@@ -173,8 +175,6 @@ export declare const OverlayContainer: import("@emotion/styled").StyledComponent
     onProgressCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onRateChange?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onRateChangeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
-    onResize?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
-    onResizeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeeked?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeekedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeeking?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
@@ -290,12 +290,12 @@ export declare const Button: import("@emotion/styled").StyledComponent<{
     as?: React.ElementType;
 }, import("react").DetailedHTMLProps<import("react").ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, {}>;
 export declare const ResizeHandle: import("@emotion/styled").StyledComponent<{
-    security?: string | undefined;
+    resource?: string | undefined;
     slot?: string | undefined;
     title?: string | undefined;
-    resource?: string | undefined;
     id?: string | undefined;
     onClick?: import("react").MouseEventHandler<HTMLDivElement> | undefined;
+    security?: string | undefined;
     defaultChecked?: boolean | undefined;
     defaultValue?: string | number | readonly string[] | undefined;
     suppressContentEditableWarning?: boolean | undefined;
@@ -339,6 +339,8 @@ export declare const ResizeHandle: import("@emotion/styled").StyledComponent<{
     unselectable?: "off" | "on" | undefined;
     inputMode?: "search" | "text" | "url" | "none" | "tel" | "email" | "numeric" | "decimal" | undefined;
     is?: string | undefined;
+    exportparts?: string | undefined;
+    part?: string | undefined;
     "aria-activedescendant"?: string | undefined;
     "aria-atomic"?: (boolean | "true" | "false") | undefined;
     "aria-autocomplete"?: "none" | "list" | "inline" | "both" | undefined;
@@ -351,12 +353,12 @@ export declare const ResizeHandle: import("@emotion/styled").StyledComponent<{
     "aria-colindextext"?: string | undefined;
     "aria-colspan"?: number | undefined;
     "aria-controls"?: string | undefined;
-    "aria-current"?: boolean | "time" | "location" | "true" | "false" | "page" | "step" | "date" | undefined;
+    "aria-current"?: boolean | "time" | "location" | "true" | "false" | "page" | "date" | "step" | undefined;
     "aria-describedby"?: string | undefined;
     "aria-description"?: string | undefined;
     "aria-details"?: string | undefined;
     "aria-disabled"?: (boolean | "true" | "false") | undefined;
-    "aria-dropeffect"?: "link" | "none" | "copy" | "execute" | "move" | "popup" | undefined;
+    "aria-dropeffect"?: "link" | "none" | "copy" | "move" | "execute" | "popup" | undefined;
     "aria-errormessage"?: string | undefined;
     "aria-expanded"?: (boolean | "true" | "false") | undefined;
     "aria-flowto"?: string | undefined;
@@ -413,7 +415,7 @@ export declare const ResizeHandle: import("@emotion/styled").StyledComponent<{
     onBlurCapture?: import("react").FocusEventHandler<HTMLDivElement> | undefined;
     onChange?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onChangeCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
-    onBeforeInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
+    onBeforeInput?: import("react").InputEventHandler<HTMLDivElement> | undefined;
     onBeforeInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onInput?: import("react").FormEventHandler<HTMLDivElement> | undefined;
     onInputCapture?: import("react").FormEventHandler<HTMLDivElement> | undefined;
@@ -463,8 +465,6 @@ export declare const ResizeHandle: import("@emotion/styled").StyledComponent<{
     onProgressCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onRateChange?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onRateChangeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
-    onResize?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
-    onResizeCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeeked?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeekedCapture?: import("react").ReactEventHandler<HTMLDivElement> | undefined;
     onSeeking?: import("react").ReactEventHandler<HTMLDivElement> | undefined;

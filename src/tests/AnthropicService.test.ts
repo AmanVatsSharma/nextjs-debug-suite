@@ -28,9 +28,11 @@ describe('AnthropicService', () => {
         type: 'error',
         context: {
           error: {
-            type: 'TypeError',
-            location: { file: 'test.ts', line: 10 },
-            visual: { codePreview: 'const x = null; x.prop;' }
+            id: 'test-error',
+            timestamp: Date.now(),
+            type: 'type' as const,
+            location: { file: 'test.ts', line: 10, column: 5, functionName: 'testFunction' },
+            visual: { codePreview: 'const x = null; x.prop;', highlightedLines: [10], dependencies: {}, stackTrace: {} }
           }
         }
       };
@@ -69,8 +71,8 @@ describe('AnthropicService', () => {
         type: 'performance',
         context: {
           metrics: {
-            memory: { heap: 100, stack: 50 },
-            performance: { loadTime: 1000 }
+            memory: { used: 100, total: 200, limit: 1000 },
+            performance: { fcp: 1000, lcp: 1500, fid: 50 }
           }
         }
       };

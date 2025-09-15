@@ -5,6 +5,9 @@ export interface StackFrame {
     functionName: string;
     source?: string;
 }
+export interface StackTraceInfo {
+    frames: StackFrame[];
+}
 export declare class StackTraceParser {
     parse(stackTrace: string): StackFrame[];
     private normalizeFileName;

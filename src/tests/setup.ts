@@ -13,7 +13,11 @@ global.IntersectionObserver = class IntersectionObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-};
+  takeRecords() { return []; }
+  root: null = null;
+  rootMargin: string = '';
+  thresholds: ReadonlyArray<number> = [];
+} as any;
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

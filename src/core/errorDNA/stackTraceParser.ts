@@ -8,6 +8,10 @@ export interface StackFrame {
   source?: string;
 }
 
+export interface StackTraceInfo {
+  frames: StackFrame[];
+}
+
 export class StackTraceParser {
   parse(stackTrace: string): StackFrame[] {
     if (!stackTrace) return [];

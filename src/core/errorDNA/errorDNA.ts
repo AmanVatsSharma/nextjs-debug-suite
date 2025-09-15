@@ -1,5 +1,5 @@
 import type { EnhancedErrorDNA } from '../types';
-import { StackTraceParser, type StackTraceInfo } from './stackTraceParser';
+import { StackTraceParser, type StackTraceInfo, type StackFrame } from './stackTraceParser';
 import { DependencyAnalyzer, type DependencyGraph } from './dependencyAnalyzer';
 
 export class ErrorDNAGenerator {
@@ -8,12 +8,12 @@ export class ErrorDNAGenerator {
 
   constructor() {
     this.stackTraceParser = new StackTraceParser();
-    this.dependencyAnalyzer = new DependencyAnalyzer();
+    this.dependencyAnalyzer = new DependencyAnalyzer(process.cwd());
   }
 
   async generateDNA(error: Error): Promise<EnhancedErrorDNA> {
-    const stackTrace = await this.stackTraceParser.parse(error);
-    const dependencies = await this.dependencyAnalyzer.analyzeDependencies(stackTrace.frames);
+    const stackTrace = this.stackTraceParser.parse(error.stack || '');
+    const dependencies = await this.dependencyAnalyzer.getDependencyGraph(stackTrace[0]?.fileName || '');
     
     const errorLocation = this.extractErrorLocation(stackTrace);
     const codePreview = this.generateCodePreview(stackTrace, errorLocation);
@@ -34,42 +34,36 @@ export class ErrorDNAGenerator {
     };
   }
 
-  private extractErrorLocation(stackTrace: StackTraceInfo) {
-    const firstFrame = stackTrace.frames[0];
+  private extractErrorLocation(stackTrace: StackFrame[]) {
+    const firstFrame = stackTrace[0];
     return {
-      file: firstFrame?.file || 'unknown',
+      file: firstFrame?.fileName || 'unknown',
       line: firstFrame?.lineNumber || 0,
-      column: firstFrame?.column || 0,
-      functionName: firstFrame?.methodName || 'unknown',
-      component: this.extractComponentName(firstFrame?.file || ''),
+      column: firstFrame?.columnNumber || 0,
+      functionName: firstFrame?.functionName || 'unknown',
+      component: this.extractComponentName(firstFrame?.fileName || ''),
     };
   }
 
-  private generateCodePreview(stackTrace: StackTraceInfo, location: { file: string; line: number }) {
-    const fileContent = stackTrace.sourceCode?.[location.file];
-    if (!fileContent) return '';
-
-    const contextLines = 5;
-    const start = Math.max(0, location.line - contextLines);
-    const end = Math.min(fileContent.length, location.line + contextLines);
-
-    return fileContent.slice(start, end).join('\n');
+  private generateCodePreview(stackTrace: StackFrame[], location: { file: string; line: number }) {
+    // For now, return a placeholder since we don't have source code access
+    return `// Code preview for ${location.file} at line ${location.line}`;
   }
 
   private identifyHighlightedLines(
-    stackTrace: StackTraceInfo,
+    stackTrace: StackFrame[],
     location: { file: string; line: number }
   ): number[] {
     const lines: number[] = [location.line];
 
     // Add related lines from the stack trace
-    stackTrace.frames.forEach(frame => {
-      if (frame.file === location.file && frame.lineNumber) {
+    stackTrace.forEach(frame => {
+      if (frame.fileName === location.file && frame.lineNumber) {
         lines.push(frame.lineNumber);
       }
     });
 
-    return [...new Set(lines)].sort((a, b) => a - b);
+    return Array.from(new Set(lines)).sort((a, b) => a - b);
   }
 
   private generateErrorId(error: Error, location: { file: string; line: number }): string {
@@ -128,14 +122,14 @@ export class ErrorDNAGenerator {
     return undefined;
   }
 
-  private formatStackTrace(stackTrace: StackTraceInfo) {
+  private formatStackTrace(stackTrace: StackFrame[]) {
     return {
-      frames: stackTrace.frames.map(frame => ({
-        file: frame.file,
+      frames: stackTrace.map(frame => ({
+        file: frame.fileName,
         line: frame.lineNumber,
-        column: frame.column,
-        function: frame.methodName,
-        context: frame.context,
+        column: frame.columnNumber,
+        function: frame.functionName,
+        context: frame.source,
       })),
     };
   }

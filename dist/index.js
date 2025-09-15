@@ -78,7 +78,7 @@ function __generator(thisArg, body) {
             }
             op = body.call(thisArg, _);
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : undefined, done: true };
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 }
 
@@ -95,100 +95,6 @@ function __spreadArray(to, from, pack) {
 typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
     var e = new Error(message);
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
-};
-
-var DebugContext = React.createContext(undefined);
-var useDebugContext = function () {
-    var context = React.useContext(DebugContext);
-    if (!context) {
-        throw new Error('useDebugContext must be used within a DebugSuiteProvider');
-    }
-    return context;
-};
-var DebugSuiteProvider = function (_a) {
-    var children = _a.children, initialConfig = _a.config;
-    var config = React.useState(initialConfig)[0];
-    var _b = React.useState({
-        errors: [],
-        performance: {
-            metrics: [],
-            memory: [],
-            renders: []
-        },
-        network: {
-            requests: [],
-            responses: []
-        },
-        console: {
-            logs: [],
-            warnings: [],
-            errors: []
-        },
-        ai: {
-            suggestions: [],
-            analysis: []
-        }
-    }), data = _b[0], setData = _b[1];
-    var clearData = React.useCallback(function (tab) {
-        setData(function (prev) {
-            var newData = __assign({}, prev);
-            switch (tab) {
-                case 'errors':
-                    newData.errors = [];
-                    break;
-                case 'performance':
-                    newData.performance = {
-                        metrics: [],
-                        memory: [],
-                        renders: []
-                    };
-                    break;
-                case 'network':
-                    newData.network = {
-                        requests: [],
-                        responses: []
-                    };
-                    break;
-                case 'console':
-                    newData.console = {
-                        logs: [],
-                        warnings: [],
-                        errors: []
-                    };
-                    break;
-                case 'ai':
-                    newData.ai = {
-                        suggestions: [],
-                        analysis: []
-                    };
-                    break;
-            }
-            return newData;
-        });
-    }, []);
-    var exportData = React.useCallback(function (tab) {
-        switch (tab) {
-            case 'errors':
-                return { errors: data.errors };
-            case 'performance':
-                return { performance: data.performance };
-            case 'network':
-                return { network: data.network };
-            case 'console':
-                return { console: data.console };
-            case 'ai':
-                return { ai: data.ai };
-            default:
-                return data;
-        }
-    }, [data]);
-    var value = {
-        config: config,
-        data: data,
-        clearData: clearData,
-        exportData: exportData
-    };
-    return (React.createElement(DebugContext.Provider, { value: value }, children));
 };
 
 var Debug = /** @class */ (function () {
@@ -223,7 +129,7 @@ var Debug = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            _this.error.apply(_this, __spreadArray(['CUSTOM'], args, false));
+            _this.error('CUSTOM', args.join(' '));
             originalConsole.error.apply(console, args);
         };
         console.warn = function () {
@@ -231,7 +137,7 @@ var Debug = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            _this.warn.apply(_this, __spreadArray(['CUSTOM'], args, false));
+            _this.warn('CUSTOM', args.join(' '));
             originalConsole.warn.apply(console, args);
         };
         console.info = function () {
@@ -239,7 +145,7 @@ var Debug = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            _this.info.apply(_this, __spreadArray(['CUSTOM'], args, false));
+            _this.info('CUSTOM', args.join(' '));
             originalConsole.info.apply(console, args);
         };
         console.debug = function () {
@@ -247,7 +153,7 @@ var Debug = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            _this.debug.apply(_this, __spreadArray(['CUSTOM'], args, false));
+            _this.debug('CUSTOM', args.join(' '));
             originalConsole.debug.apply(console, args);
         };
         console.log = function () {
@@ -255,7 +161,7 @@ var Debug = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            _this.log.apply(_this, __spreadArray(['CUSTOM'], args, false));
+            _this.log('INFO', 'CUSTOM', args.join(' '));
             originalConsole.log.apply(console, args);
         };
     };
@@ -371,126 +277,6 @@ var Debug = /** @class */ (function () {
 }());
 var debug = Debug.getInstance();
 
-var PerformanceMonitor = /** @class */ (function () {
-    function PerformanceMonitor() {
-        this.debug = debug;
-        this.measures = new Map();
-        this.logs = [];
-        this.maxLogs = 1000;
-        this.paintCallbacks = [];
-    }
-    PerformanceMonitor.prototype.startMeasure = function (name) {
-        if (typeof performance === 'undefined')
-            return;
-        performance.mark("".concat(name, "-start"));
-        this.measures.set(name, performance.now());
-    };
-    PerformanceMonitor.prototype.endMeasure = function (name) {
-        if (typeof performance === 'undefined')
-            return null;
-        var startTime = this.measures.get(name);
-        if (!startTime)
-            return null;
-        var endTime = performance.now();
-        var duration = endTime - startTime;
-        performance.mark("".concat(name, "-end"));
-        performance.measure(name, "".concat(name, "-start"), "".concat(name, "-end"));
-        this.measures.delete(name);
-        performance.clearMarks("".concat(name, "-start"));
-        performance.clearMarks("".concat(name, "-end"));
-        this.debug.info('PERFORMANCE', "".concat(name, " took ").concat(duration.toFixed(2), "ms"), { duration: duration });
-        this.addLog('measure', { name: name, duration: duration });
-        return duration;
-    };
-    PerformanceMonitor.prototype.trackComponentRender = function (componentName) {
-        var _this = this;
-        return {
-            mount: function () { return _this.startMeasure("".concat(componentName, ":render")); },
-            unmount: function () { return _this.endMeasure("".concat(componentName, ":render")); }
-        };
-    };
-    PerformanceMonitor.prototype.trackMemory = function () {
-        if (typeof performance === 'undefined')
-            return null;
-        var memory = performance.memory;
-        if (!memory)
-            return null;
-        var metrics = {
-            usedJSHeapSize: memory.usedJSHeapSize,
-            totalJSHeapSize: memory.totalJSHeapSize,
-            jsHeapSizeLimit: memory.jsHeapSizeLimit
-        };
-        this.debug.info('MEMORY', 'Memory Usage', metrics);
-        this.addLog('memory', metrics);
-        return metrics;
-    };
-    PerformanceMonitor.prototype.trackResourceTiming = function () {
-        return __awaiter(this, undefined, undefined, function () {
-            var resources, metrics;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (typeof performance === 'undefined')
-                    return [2 /*return*/, []];
-                resources = performance.getEntriesByType('resource');
-                metrics = resources.map(function (entry) { return ({
-                    name: entry.name,
-                    duration: entry.duration,
-                    startTime: entry.startTime,
-                    transferSize: entry.transferSize
-                }); });
-                this.debug.info('PERFORMANCE', 'Resource Timing', metrics);
-                metrics.forEach(function (metric) { return _this.addLog('resource', metric); });
-                return [2 /*return*/, metrics];
-            });
-        });
-    };
-    PerformanceMonitor.prototype.trackFirstPaint = function () {
-        var _this = this;
-        if (typeof performance === 'undefined')
-            return function () { };
-        var observer = new PerformanceObserver(function (list) {
-            var _loop_1 = function (entry) {
-                _this.debug.info('PERFORMANCE', entry.name, { startTime: entry.startTime });
-                _this.addLog('paint', { name: entry.name, startTime: entry.startTime });
-                _this.paintCallbacks.forEach(function (callback) { return callback(entry); });
-            };
-            for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
-                var entry = _a[_i];
-                _loop_1(entry);
-            }
-        });
-        observer.observe({ entryTypes: ['paint'] });
-        return function () { return observer.disconnect(); };
-    };
-    PerformanceMonitor.prototype.onPaintMetric = function (callback) {
-        var _this = this;
-        this.paintCallbacks.push(callback);
-        return function () {
-            var index = _this.paintCallbacks.indexOf(callback);
-            if (index > -1) {
-                _this.paintCallbacks.splice(index, 1);
-            }
-        };
-    };
-    PerformanceMonitor.prototype.getLogs = function (type) {
-        return type ? this.logs.filter(function (log) { return log.type === type; }) : this.logs;
-    };
-    PerformanceMonitor.prototype.clearLogs = function () {
-        this.logs = [];
-    };
-    PerformanceMonitor.prototype.addLog = function (type, data) {
-        this.logs.push({
-            type: type,
-            timestamp: Date.now(),
-            data: data
-        });
-        if (this.logs.length > this.maxLogs) {
-            this.logs = this.logs.slice(-this.maxLogs);
-        }
-    };
-    return PerformanceMonitor;
-}());
-
 var NetworkMonitor = /** @class */ (function () {
     function NetworkMonitor() {
         this.debug = debug;
@@ -511,13 +297,13 @@ var NetworkMonitor = /** @class */ (function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            return __awaiter(_this, undefined, undefined, function () {
+            return __awaiter(_this, void 0, void 0, function () {
                 var request, response, clonedResponse, _a, _c, error_1;
                 var _d;
                 return __generator(this, function (_e) {
                     switch (_e.label) {
                         case 0:
-                            request = this.createRequest(args[0] instanceof URL ? args[0].toString() : args[0], ((_d = args[1]) === null || _d === undefined ? undefined : _d.method) || 'GET');
+                            request = this.createRequest(args[0] instanceof URL ? args[0].toString() : args[0], ((_d = args[1]) === null || _d === void 0 ? void 0 : _d.method) || 'GET');
                             _e.label = 1;
                         case 1:
                             _e.trys.push([1, 8, , 9]);
@@ -528,6 +314,8 @@ var NetworkMonitor = /** @class */ (function () {
                             request.status = response.status;
                             request.statusText = response.statusText;
                             request.headers = this.parseHeaders(response.headers);
+                            request.responseHeaders = this.parseHeaders(response.headers);
+                            request.initiator = 'fetch';
                             _e.label = 3;
                         case 3:
                             _e.trys.push([3, 5, , 7]);
@@ -568,6 +356,8 @@ var NetworkMonitor = /** @class */ (function () {
                     _this.request.status = _this.status;
                     _this.request.statusText = _this.statusText;
                     _this.request.headers = self.parseHeaders(_this.getAllResponseHeaders());
+                    _this.request.responseHeaders = self.parseHeaders(_this.getAllResponseHeaders());
+                    _this.request.initiator = 'xhr';
                     try {
                         _this.request.responseBody = JSON.parse(_this.responseText);
                     }
@@ -672,6 +462,225 @@ var NetworkMonitor = /** @class */ (function () {
     return NetworkMonitor;
 }());
 
+var PerformanceMonitor = /** @class */ (function () {
+    function PerformanceMonitor() {
+        this.debug = debug;
+        this.measures = new Map();
+        this.logs = [];
+        this.maxLogs = 1000;
+        this.paintCallbacks = [];
+    }
+    PerformanceMonitor.prototype.startMeasure = function (name) {
+        if (typeof performance === 'undefined')
+            return;
+        performance.mark("".concat(name, "-start"));
+        this.measures.set(name, performance.now());
+    };
+    PerformanceMonitor.prototype.endMeasure = function (name) {
+        if (typeof performance === 'undefined')
+            return null;
+        var startTime = this.measures.get(name);
+        if (!startTime)
+            return null;
+        var endTime = performance.now();
+        var duration = endTime - startTime;
+        performance.mark("".concat(name, "-end"));
+        performance.measure(name, "".concat(name, "-start"), "".concat(name, "-end"));
+        this.measures.delete(name);
+        performance.clearMarks("".concat(name, "-start"));
+        performance.clearMarks("".concat(name, "-end"));
+        this.debug.info('PERFORMANCE', "".concat(name, " took ").concat(duration.toFixed(2), "ms"), { duration: duration });
+        this.addLog('measure', { name: name, duration: duration });
+        return duration;
+    };
+    PerformanceMonitor.prototype.trackComponentRender = function (componentName) {
+        var _this = this;
+        return {
+            mount: function () { return _this.startMeasure("".concat(componentName, ":render")); },
+            unmount: function () { return _this.endMeasure("".concat(componentName, ":render")); }
+        };
+    };
+    PerformanceMonitor.prototype.trackMemory = function () {
+        if (typeof performance === 'undefined')
+            return null;
+        var memory = performance.memory;
+        if (!memory)
+            return null;
+        var metrics = {
+            usedJSHeapSize: memory.usedJSHeapSize,
+            totalJSHeapSize: memory.totalJSHeapSize,
+            jsHeapSizeLimit: memory.jsHeapSizeLimit
+        };
+        this.debug.info('MEMORY', 'Memory Usage', metrics);
+        this.addLog('memory', metrics);
+        return metrics;
+    };
+    PerformanceMonitor.prototype.trackResourceTiming = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var resources, metrics;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (typeof performance === 'undefined')
+                    return [2 /*return*/, []];
+                resources = performance.getEntriesByType('resource');
+                metrics = resources.map(function (entry) { return ({
+                    name: entry.name,
+                    duration: entry.duration,
+                    startTime: entry.startTime,
+                    transferSize: entry.transferSize
+                }); });
+                this.debug.info('PERFORMANCE', 'Resource Timing', metrics);
+                metrics.forEach(function (metric) { return _this.addLog('resource', metric); });
+                return [2 /*return*/, metrics];
+            });
+        });
+    };
+    PerformanceMonitor.prototype.trackFirstPaint = function () {
+        var _this = this;
+        if (typeof performance === 'undefined')
+            return function () { };
+        var observer = new PerformanceObserver(function (list) {
+            var _loop_1 = function (entry) {
+                _this.debug.info('PERFORMANCE', entry.name, { startTime: entry.startTime });
+                _this.addLog('paint', { name: entry.name, startTime: entry.startTime });
+                _this.paintCallbacks.forEach(function (callback) { return callback(entry); });
+            };
+            for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
+                var entry = _a[_i];
+                _loop_1(entry);
+            }
+        });
+        observer.observe({ entryTypes: ['paint'] });
+        return function () { return observer.disconnect(); };
+    };
+    PerformanceMonitor.prototype.onPaintMetric = function (callback) {
+        var _this = this;
+        this.paintCallbacks.push(callback);
+        return function () {
+            var index = _this.paintCallbacks.indexOf(callback);
+            if (index > -1) {
+                _this.paintCallbacks.splice(index, 1);
+            }
+        };
+    };
+    PerformanceMonitor.prototype.getLogs = function (type) {
+        return type ? this.logs.filter(function (log) { return log.type === type; }) : this.logs;
+    };
+    PerformanceMonitor.prototype.clearLogs = function () {
+        this.logs = [];
+    };
+    PerformanceMonitor.prototype.addLog = function (type, data) {
+        this.logs.push({
+            type: type,
+            timestamp: Date.now(),
+            data: data
+        });
+        if (this.logs.length > this.maxLogs) {
+            this.logs = this.logs.slice(-this.maxLogs);
+        }
+    };
+    return PerformanceMonitor;
+}());
+
+var DebugContext = React.createContext(undefined);
+var useDebugContext = function () {
+    var context = React.useContext(DebugContext);
+    if (!context) {
+        throw new Error('useDebugContext must be used within a DebugSuiteProvider');
+    }
+    return context;
+};
+var DebugSuiteProvider = function (_a) {
+    var children = _a.children, initialConfig = _a.config;
+    var config = React.useState(initialConfig)[0];
+    var networkMonitor = React.useState(function () { return new NetworkMonitor(); })[0];
+    var performanceMonitor = React.useState(function () { return new PerformanceMonitor(); })[0];
+    var _b = React.useState({
+        errors: [],
+        performance: {
+            metrics: [],
+            memory: [],
+            renders: []
+        },
+        network: {
+            requests: [],
+            responses: []
+        },
+        console: {
+            logs: [],
+            warnings: [],
+            errors: []
+        },
+        ai: {
+            suggestions: [],
+            analysis: []
+        }
+    }), data = _b[0], setData = _b[1];
+    var clearData = React.useCallback(function (tab) {
+        setData(function (prev) {
+            var newData = __assign({}, prev);
+            switch (tab) {
+                case 'errors':
+                    newData.errors = [];
+                    break;
+                case 'performance':
+                    newData.performance = {
+                        metrics: [],
+                        memory: [],
+                        renders: []
+                    };
+                    break;
+                case 'network':
+                    newData.network = {
+                        requests: [],
+                        responses: []
+                    };
+                    break;
+                case 'console':
+                    newData.console = {
+                        logs: [],
+                        warnings: [],
+                        errors: []
+                    };
+                    break;
+                case 'ai':
+                    newData.ai = {
+                        suggestions: [],
+                        analysis: []
+                    };
+                    break;
+            }
+            return newData;
+        });
+    }, []);
+    var exportData = React.useCallback(function (tab) {
+        switch (tab) {
+            case 'errors':
+                return { errors: data.errors };
+            case 'performance':
+                return { performance: data.performance };
+            case 'network':
+                return { network: data.network };
+            case 'console':
+                return { console: data.console };
+            case 'ai':
+                return { ai: data.ai };
+            default:
+                return data;
+        }
+    }, [data]);
+    var value = {
+        config: config,
+        data: data,
+        clearData: clearData,
+        exportData: exportData,
+        debug: debug,
+        network: networkMonitor,
+        performance: performanceMonitor
+    };
+    return (React.createElement(DebugContext.Provider, { value: value }, children));
+};
+
 var StateDebugMonitor = /** @class */ (function () {
     function StateDebugMonitor() {
         this.debug = debug;
@@ -753,7 +762,7 @@ var StateDebugMonitor = /** @class */ (function () {
         if (this.changes.length > this.maxChanges) {
             this.changes = this.changes.slice(0, this.maxChanges);
         }
-        this.debug.log('STATE', "".concat(stateChange.type, " change in ").concat(stateChange.componentName || 'unknown'), stateChange);
+        this.debug.log('INFO', 'STATE', "".concat(stateChange.type, " change in ").concat(stateChange.componentName || 'unknown'), stateChange);
         this.notifyChangeCallbacks(stateChange);
     };
     StateDebugMonitor.prototype.calculateDiff = function (prev, next) {
@@ -795,7 +804,7 @@ var StateDebugMonitor = /** @class */ (function () {
                 return false;
             if (filter.componentName && change.componentName !== filter.componentName)
                 return false;
-            if (filter.actionType && ((_a = change.action) === null || _a === undefined ? undefined : _a.type) !== filter.actionType)
+            if (filter.actionType && ((_a = change.action) === null || _a === void 0 ? void 0 : _a.type) !== filter.actionType)
                 return false;
             return true;
         });

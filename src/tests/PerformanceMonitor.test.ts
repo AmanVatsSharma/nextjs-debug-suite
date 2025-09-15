@@ -1,4 +1,5 @@
 import { PerformanceMonitor } from '../core/performanceMonitor';
+import { debug } from '../core/debug';
 
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
@@ -23,7 +24,8 @@ describe('PerformanceMonitor', () => {
       observe: jest.fn(),
       disconnect: jest.fn(),
       takeRecords: jest.fn(),
-      callback
+      callback,
+      supportedEntryTypes: ['paint', 'measure', 'navigation']
     }));
     
     monitor = new PerformanceMonitor();
@@ -35,7 +37,7 @@ describe('PerformanceMonitor', () => {
 
   describe('performance measurements', () => {
     it('should measure execution time', () => {
-      performance.now.mockReturnValueOnce(100).mockReturnValueOnce(150);
+      (performance.now as jest.Mock).mockReturnValueOnce(100).mockReturnValueOnce(150);
       
       monitor.startMeasure('test');
       const duration = monitor.endMeasure('test');
