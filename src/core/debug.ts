@@ -18,8 +18,8 @@ class Debug {
   private maxLogs = 1000;
   private logCallbacks: ((entry: LogEntry) => void)[] = [];
   private enabled = true;
-  private logLevels: Set<LogLevel> = new Set(['ERROR', 'WARN', 'INFO']);
-  private logCategories: Set<LogCategory> = new Set(['ERROR', 'NETWORK', 'PERFORMANCE', 'STATE']);
+  private logLevels: Set<LogLevel> = new Set(['ERROR' as LogLevel, 'WARN' as LogLevel, 'INFO' as LogLevel]);
+  private logCategories: Set<LogCategory> = new Set(['ERROR' as LogCategory, 'NETWORK' as LogCategory, 'PERFORMANCE' as LogCategory, 'STATE' as LogCategory]);
 
   private constructor() {
     if (typeof window !== 'undefined') {
@@ -44,27 +44,27 @@ class Debug {
     };
 
     console.error = (...args) => {
-      this.error('CUSTOM', ...args);
+      this.error('CUSTOM', args.join(' '));
       originalConsole.error.apply(console, args);
     };
 
     console.warn = (...args) => {
-      this.warn('CUSTOM', ...args);
+      this.warn('CUSTOM', args.join(' '));
       originalConsole.warn.apply(console, args);
     };
 
     console.info = (...args) => {
-      this.info('CUSTOM', ...args);
+      this.info('CUSTOM', args.join(' '));
       originalConsole.info.apply(console, args);
     };
 
     console.debug = (...args) => {
-      this.debug('CUSTOM', ...args);
+      this.debug('CUSTOM', args.join(' '));
       originalConsole.debug.apply(console, args);
     };
 
     console.log = (...args) => {
-      this.log('CUSTOM', ...args);
+      this.log('INFO', 'CUSTOM', args.join(' '));
       originalConsole.log.apply(console, args);
     };
   }

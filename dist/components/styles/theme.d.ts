@@ -1,7 +1,13 @@
 export interface ThemeColors {
-    background: string;
+    background: {
+        primary: string;
+        secondary: string;
+    };
     surface: string;
-    text: string;
+    text: {
+        primary: string;
+        secondary: string;
+    };
     textSecondary: string;
     border: string;
     hover: string;
@@ -9,7 +15,14 @@ export interface ThemeColors {
     secondary: string;
     success: string;
     warning: string;
-    error: string;
+    error: {
+        background: string;
+    };
+    highlight: {
+        background: string;
+    };
+    info: string;
+    tabBackground: string;
     white: string;
 }
 export interface Theme {

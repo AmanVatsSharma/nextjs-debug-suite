@@ -92,7 +92,7 @@ export const ConsoleTab: React.FC = () => {
   const [expandedLogs, setExpandedLogs] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    const unsubscribe = debug.subscribe((log) => {
+    const unsubscribe = debug.subscribe((log: any) => {
       setLogs(prev => [log, ...prev]);
     });
 

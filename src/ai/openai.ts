@@ -72,7 +72,7 @@ ${request.context.codeContext}`;
     // Parse the response into structured format
     // This is a simple implementation; you might want to make it more robust
     const [explanation, ...rest] = response.split('\n\n');
-    const suggestedFix = rest.find(part => part.startsWith('```'))?.replace(/```\w*\n/, '').replace(/```$/, '');
+    const suggestedFix = rest.find((part: string) => part.startsWith('```'))?.replace(/```\w*\n/, '').replace(/```$/, '');
     
     return {
       explanation,

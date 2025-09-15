@@ -9,9 +9,13 @@ export interface NetworkRequest {
   startTime: number;
   endTime?: number;
   duration?: number;
+  size?: number;
   headers?: Record<string, string>;
+  requestHeaders?: Record<string, string>;
+  responseHeaders?: Record<string, string>;
   requestBody?: any;
   responseBody?: any;
+  initiator?: string;
   error?: Error;
 }
 
@@ -44,6 +48,8 @@ export class NetworkMonitor {
         request.status = response.status;
         request.statusText = response.statusText;
         request.headers = this.parseHeaders(response.headers);
+        request.responseHeaders = this.parseHeaders(response.headers);
+        request.initiator = 'fetch';
         
         try {
           request.responseBody = await clonedResponse.json();
@@ -71,9 +77,11 @@ export class NetworkMonitor {
         this.request = self.createRequest('', 'GET');
 
         this.addEventListener('load', () => {
-          this.request.status = this.status;
-          this.request.statusText = this.statusText;
-          this.request.headers = self.parseHeaders(this.getAllResponseHeaders());
+        this.request.status = this.status;
+        this.request.statusText = this.statusText;
+        this.request.headers = self.parseHeaders(this.getAllResponseHeaders());
+        this.request.responseHeaders = self.parseHeaders(this.getAllResponseHeaders());
+        this.request.initiator = 'xhr';
           
           try {
             this.request.responseBody = JSON.parse(this.responseText);

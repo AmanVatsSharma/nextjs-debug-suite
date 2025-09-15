@@ -140,12 +140,12 @@ const ErrorBoundaryFallback: React.FC<{ errorState: ErrorBoundaryState }> = ({ e
           <DependencySection>
             <SectionTitle>Dependencies</SectionTitle>
             <DependencyGraph>
-              {Object.entries(errorDNA.visual.dependencies.nodes).map(([id, node]) => (
+              {Object.entries(errorDNA.visual.dependencies.nodes || {}).map(([id, node]: [string, any]) => (
                 <div key={id}>
                   {node.name} ({node.type}):
-                  {node.dependencies.length > 0 && (
+                  {node.dependencies && node.dependencies.length > 0 && (
                     <ul>
-                      {node.dependencies.map(dep => (
+                      {node.dependencies.map((dep: any) => (
                         <li key={dep}>{dep}</li>
                       ))}
                     </ul>

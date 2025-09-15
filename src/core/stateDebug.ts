@@ -115,7 +115,7 @@ export class StateDebugMonitor {
       this.changes = this.changes.slice(0, this.maxChanges);
     }
 
-    this.debug.log('STATE', `${stateChange.type} change in ${stateChange.componentName || 'unknown'}`, stateChange);
+    this.debug.log('INFO', 'STATE', `${stateChange.type} change in ${stateChange.componentName || 'unknown'}`, stateChange);
     this.notifyChangeCallbacks(stateChange);
   }
 

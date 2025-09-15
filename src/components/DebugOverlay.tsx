@@ -27,7 +27,7 @@ export const DebugOverlay: React.FC = () => {
   const [size, setSize] = useState(config.overlay.size);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const theme = getTheme(config.overlay.theme);
+  const theme = getTheme(config.overlay.theme === 'dark');
 
   const handleResize = useCallback(
     (_: any, info: PanInfo) => {

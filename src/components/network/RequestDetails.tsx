@@ -154,7 +154,7 @@ export const RequestDetails: React.FC<RequestDetailsProps> = ({ request }) => {
       {request.error && (
         <Section>
           <SectionTitle>Error</SectionTitle>
-          <CodeBlock style={{ color: props => props.theme.colors.error }}>
+          <CodeBlock style={{ color: '#ff3b30' }}>
             {request.error.message}
             {request.error.stack && `\n\n${request.error.stack}`}
           </CodeBlock>

@@ -14,8 +14,8 @@ const mockRequest: NetworkRequest = {
   duration: 200,
   status: 201,
   statusText: 'Created',
-  initiator: 'fetch',
   size: 1024,
+  initiator: 'fetch',
   requestHeaders: {
     'content-type': 'application/json',
     'authorization': 'Bearer token',
@@ -45,7 +45,6 @@ const mockErrorRequest: NetworkRequest = {
   duration: 200,
   status: 404,
   statusText: 'Not Found',
-  initiator: 'fetch',
   error: new Error('Resource not found'),
 };
 
@@ -70,7 +69,7 @@ describe('RequestDetails', () => {
     expect(within(grid).getByText(mockRequest.status!.toString())).toBeInTheDocument();
     expect(within(grid).getByText('200ms')).toBeInTheDocument();
     expect(within(grid).getByText('1.0KB')).toBeInTheDocument();
-    expect(within(grid).getByText(mockRequest.initiator)).toBeInTheDocument();
+    expect(within(grid).getByText(mockRequest.initiator || 'fetch')).toBeInTheDocument();
   });
 
   it('displays request headers', () => {
@@ -171,7 +170,6 @@ describe('RequestDetails', () => {
       url: 'https://api.example.com/test',
       method: 'GET',
       startTime: Date.now(),
-      initiator: 'fetch',
     };
 
     renderRequestDetails(minimalRequest);

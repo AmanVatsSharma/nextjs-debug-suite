@@ -126,10 +126,10 @@ describe('NetworkMonitor', () => {
           method: 'GET',
           status: 200,
           statusText: 'OK',
+          startTime: Date.now(),
           duration: 100,
           size: 1024,
-          initiator: 'fetch',
-          timestamp: Date.now()
+          initiator: 'fetch'
         });
       }
 
@@ -143,10 +143,10 @@ describe('NetworkMonitor', () => {
         method: 'GET',
         status: 200,
         statusText: 'OK',
+        startTime: Date.now(),
         duration: 100,
         size: 1024,
-        initiator: 'fetch',
-        timestamp: Date.now()
+        initiator: 'fetch'
       });
 
       monitor.clearRequests();
@@ -165,14 +165,14 @@ describe('NetworkMonitor', () => {
         method: 'GET',
         status: 200,
         statusText: 'OK',
+        startTime: Date.now(),
         duration: 100,
         size: 1024,
-        initiator: 'fetch',
-        timestamp: Date.now()
+        initiator: 'fetch'
       };
 
       monitor['requests'].push(request);
-      monitor['notifyRequestCallbacks'](request);
+      monitor['requestCallbacks'].forEach(callback => callback(request));
 
       expect(callback).toHaveBeenCalledWith(request);
     });

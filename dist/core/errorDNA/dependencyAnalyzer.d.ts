@@ -7,6 +7,8 @@ export interface DependencyNode {
 export interface DependencyEdge {
     source: string;
     target: string;
+    from: string;
+    to: string;
     type: 'import' | 'export' | 'uses';
 }
 export interface DependencyGraph {
