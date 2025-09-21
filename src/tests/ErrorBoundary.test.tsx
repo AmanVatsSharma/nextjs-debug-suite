@@ -95,9 +95,11 @@ describe('ErrorBoundary', () => {
     // Rerender with non-throwing child
     await act(async () => {
       rerender(
-        <ErrorBoundary>
-          <div>Recovered content</div>
-        </ErrorBoundary>
+        <ThemeProvider theme={darkTheme}>
+          <ErrorBoundary>
+            <div>Recovered content</div>
+          </ErrorBoundary>
+        </ThemeProvider>
       );
     });
 
@@ -122,9 +124,11 @@ describe('ErrorBoundary', () => {
 
     await act(async () => {
       rerender(
-        <ErrorBoundary>
-          <NewError />
-        </ErrorBoundary>
+        <ThemeProvider theme={darkTheme}>
+          <ErrorBoundary>
+            <NewError />
+          </ErrorBoundary>
+        </ThemeProvider>
       );
     });
 

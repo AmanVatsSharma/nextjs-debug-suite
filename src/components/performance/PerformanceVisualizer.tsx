@@ -8,7 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  background: ${({ theme }) => theme.colors.background.secondary};
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 8px;
 `;
 
@@ -26,12 +26,12 @@ const MetricHeader = styled.div`
 
 const MetricTitle = styled.h4`
   margin: 0;
-  color: ${({ theme }) => theme.colors.text.primary};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const MetricValue = styled.span`
   font-family: monospace;
-  color: ${({ theme }) => theme.colors.text.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const BarChart = styled(motion.div)`

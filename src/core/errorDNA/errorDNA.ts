@@ -6,9 +6,9 @@ export class ErrorDNAGenerator {
   private stackTraceParser: StackTraceParser;
   private dependencyAnalyzer: DependencyAnalyzer;
 
-  constructor() {
-    this.stackTraceParser = new StackTraceParser();
-    this.dependencyAnalyzer = new DependencyAnalyzer(process.cwd());
+  constructor(parser?: StackTraceParser, analyzer?: DependencyAnalyzer) {
+    this.stackTraceParser = parser || new StackTraceParser();
+    this.dependencyAnalyzer = analyzer || new DependencyAnalyzer(process.cwd());
   }
 
   async generateDNA(error: Error): Promise<EnhancedErrorDNA> {

@@ -61,14 +61,15 @@ describe('DebugOverlay', () => {
     URL.createObjectURL = jest.fn(() => 'mock-url');
     URL.revokeObjectURL = jest.fn();
     
-    // Mock document.createElement for the download link
-    const mockLink = {
-      href: '',
-      download: '',
-      click: jest.fn(),
-      remove: jest.fn()
-    };
-    document.createElement = jest.fn().mockReturnValue(mockLink);
+    // Mock document.createElement for the download link to return a Node
+    if (typeof document !== 'undefined') {
+      const mockLink = document.createElement('a');
+      jest.spyOn(mockLink, 'click').mockImplementation(() => {});
+      jest.spyOn(document, 'createElement').mockImplementation((tag: any) => {
+        if (tag === 'a') return mockLink;
+        return (Document.prototype.createElement as any).call(document, tag);
+      });
+    }
 
     (useDebugContext as jest.Mock).mockReturnValue({
       config: mockConfig,

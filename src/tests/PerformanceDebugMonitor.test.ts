@@ -22,6 +22,7 @@ describe('PerformanceMonitor', () => {
 
     // Mock PerformanceObserver
     (global as any).PerformanceObserver = class {
+      static supportedEntryTypes = ['paint'];
       constructor(callback: any) {
         this.callback = callback;
       }
@@ -139,8 +140,9 @@ describe('PerformanceMonitor', () => {
       monitor.onPaintMetric(callback);
 
       // Simulate PerformanceObserver callback
-      const observer = new (global as any).PerformanceObserver();
-      observer.callback({ getEntries: () => [mockEntry] });
+      const observer = new (global as any).PerformanceObserver(() => {});
+      // Simulate callback invocation
+      (observer as any).callback({ getEntries: () => [mockEntry] });
 
       expect(callback).toHaveBeenCalledWith(mockEntry);
       expect(debug.info).toHaveBeenCalledWith(

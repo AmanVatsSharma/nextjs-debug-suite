@@ -26,7 +26,7 @@ const ErrorTitle = styled.h3`
 
 const ErrorMeta = styled.div`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-top: 4px;
 `;
 

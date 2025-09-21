@@ -29,27 +29,30 @@ export class PerformanceMonitor {
   private paintCallbacks: ((entry: PerformanceEntry) => void)[] = [];
 
   startMeasure(name: string) {
-    if (typeof performance === 'undefined') return;
-    
+    if (typeof performance === 'undefined' || typeof performance.now !== 'function') return;
     performance.mark(`${name}-start`);
     this.measures.set(name, performance.now());
   }
 
   endMeasure(name: string): number | null {
-    if (typeof performance === 'undefined') return null;
+    if (typeof performance === 'undefined' || typeof performance.now !== 'function') return null;
     
     const startTime = this.measures.get(name);
-    if (!startTime) return null;
+    if (startTime === undefined) return null;
 
     const endTime = performance.now();
     const duration = endTime - startTime;
 
-    performance.mark(`${name}-end`);
-    performance.measure(name, `${name}-start`, `${name}-end`);
+    if (typeof performance.mark === 'function' && typeof performance.measure === 'function') {
+      performance.mark(`${name}-end`);
+      performance.measure(name, `${name}-start`, `${name}-end`);
+    }
 
     this.measures.delete(name);
-    performance.clearMarks(`${name}-start`);
-    performance.clearMarks(`${name}-end`);
+    if (typeof performance.clearMarks === 'function') {
+      performance.clearMarks(`${name}-start`);
+      performance.clearMarks(`${name}-end`);
+    }
 
     this.debug.info('PERFORMANCE', `${name} took ${duration.toFixed(2)}ms`, { duration });
     this.addLog('measure', { name, duration });
@@ -83,7 +86,7 @@ export class PerformanceMonitor {
   }
 
   async trackResourceTiming() {
-    if (typeof performance === 'undefined') return [];
+    if (typeof performance === 'undefined' || typeof performance.getEntriesByType !== 'function') return [];
 
     const resources = performance.getEntriesByType('resource');
     const metrics = resources.map(entry => ({
@@ -100,9 +103,9 @@ export class PerformanceMonitor {
   }
 
   trackFirstPaint() {
-    if (typeof performance === 'undefined') return () => {};
+    if (typeof performance === 'undefined' || !(globalThis as any).PerformanceObserver) return () => {};
 
-    const observer = new PerformanceObserver((list) => {
+    const observer = new (globalThis as any).PerformanceObserver((list: PerformanceObserverEntryList) => {
       for (const entry of list.getEntries()) {
         this.debug.info('PERFORMANCE', entry.name, { startTime: entry.startTime });
         this.addLog('paint', { name: entry.name, startTime: entry.startTime });
@@ -116,6 +119,10 @@ export class PerformanceMonitor {
 
   onPaintMetric(callback: (entry: PerformanceEntry) => void) {
     this.paintCallbacks.push(callback);
+    // Ensure observer is running so callbacks receive entries
+    try {
+      this.trackFirstPaint();
+    } catch {}
     return () => {
       const index = this.paintCallbacks.indexOf(callback);
       if (index > -1) {

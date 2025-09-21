@@ -35,7 +35,7 @@ const MetricValue = styled.div<{ status?: 'warning' | 'error' | 'success' }>`
 
 const MetricMeta = styled.div`
   font-size: 12px;
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-top: 4px;
 `;
 

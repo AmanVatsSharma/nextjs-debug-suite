@@ -26,7 +26,7 @@ const ErrorTitle = styled.h2`
 
 const ErrorMeta = styled.div`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const CodeSection = styled.div`
@@ -82,6 +82,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       this.setState({ errorDNA, errorInfo });
     } catch (e) {
       console.error('Failed to generate error DNA:', e);
+    }
+  }
+
+  componentDidUpdate(prevProps: ErrorBoundaryProps) {
+    // Allow recovery when children change
+    if (this.state.hasError && prevProps.children !== this.props.children) {
+      this.setState({ hasError: false, error: undefined, errorInfo: undefined, errorDNA: undefined });
     }
   }
 

@@ -39,6 +39,21 @@ export class StackTraceParser {
     
     // Convert Windows paths to Unix-style
     fileName = fileName.replace(/\\/g, '/');
+
+    // For URLs like http://localhost:3000/static/js/bundle.js keep absolute for source,
+    // but many consumers expect just the path segment. Strip origin if present.
+    try {
+      const url = new URL(fileName);
+      if (url.pathname) {
+        fileName = url.pathname.replace(/^\//, '');
+      }
+    } catch {}
+
+    // Normalize drive letters in Windows paths like C:/Users/... to preserve drive
+    if (/^[A-Za-z]:\//.test(fileName)) {
+      // Keep as-is
+      return fileName;
+    }
     
     return fileName;
   }

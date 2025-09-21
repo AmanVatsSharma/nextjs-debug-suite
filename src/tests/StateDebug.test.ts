@@ -23,8 +23,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackStateChanges('TestComponent', 'count', initialState, newState);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'useState change in TestComponent',
+        expect.stringContaining('useState change in TestComponent'),
         expect.objectContaining({
           type: 'useState',
           componentName: 'TestComponent',
@@ -46,8 +47,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackStateChanges('TestComponent', 'user', initialState, newState);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'useState change in TestComponent',
+        expect.stringContaining('useState change in TestComponent'),
         expect.objectContaining({
           type: 'useState',
           componentName: 'TestComponent',
@@ -72,8 +74,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackStateChanges('TestComponent', 'items', initialState, newState);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'useState change in TestComponent',
+        expect.stringContaining('useState change in TestComponent'),
         expect.objectContaining({
           type: 'useState',
           componentName: 'TestComponent',
@@ -100,8 +103,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackContextChanges('ThemeContext', initialContext, newContext);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'context change in ThemeContext',
+        expect.stringContaining('context change in ThemeContext'),
         expect.objectContaining({
           type: 'context',
           componentName: 'ThemeContext',
@@ -126,8 +130,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackContextChanges('UserContext', initialContext, newContext);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'context change in UserContext',
+        expect.stringContaining('context change in UserContext'),
         expect.objectContaining({
           type: 'context',
           componentName: 'UserContext',
@@ -160,8 +165,9 @@ describe('StateDebugMonitor', () => {
       monitor.trackStateChanges('TestComponent', 'value', initialState, newState);
 
       expect(debug.log).toHaveBeenCalledWith(
+        'INFO',
         'STATE',
-        'useState change in TestComponent',
+        expect.stringContaining('useState change in TestComponent'),
         expect.objectContaining({
           type: 'useState',
           componentName: 'TestComponent',

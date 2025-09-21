@@ -24,10 +24,29 @@ export class NetworkMonitor {
   private requests: NetworkRequest[] = [];
   private maxRequests = 1000;
   private requestCallbacks: ((request: NetworkRequest) => void)[] = [];
-  private originalFetch: typeof fetch = typeof window !== 'undefined' ? window.fetch : fetch;
-  private originalXHR: typeof XMLHttpRequest = typeof window !== 'undefined' ? window.XMLHttpRequest : XMLHttpRequest;
+  private originalFetch: typeof fetch = typeof window !== 'undefined' && (window as any).fetch ? (window as any).fetch : (globalThis.fetch as any);
+  private originalXHR: typeof XMLHttpRequest = typeof window !== 'undefined' ? window.XMLHttpRequest : (globalThis.XMLHttpRequest as any);
 
   constructor() {
+    // Wrap requests array to enforce max length even when directly mutated
+    const target: NetworkRequest[] = [];
+    this.requests = new Proxy(target, {
+      get: (t, prop, receiver) => {
+        if (prop === 'push') {
+          return (...args: any[]) => {
+            // @ts-ignore
+            const result = Array.prototype.push.apply(t, args);
+            if (t.length > this.maxRequests) {
+              t.splice(this.maxRequests);
+            }
+            return result;
+          };
+        }
+        // @ts-ignore
+        return Reflect.get(t, prop, receiver);
+      },
+    }) as unknown as NetworkRequest[];
+
     if (typeof window !== 'undefined') {
       this.monitorFetch();
       this.monitorXHR();
@@ -35,14 +54,14 @@ export class NetworkMonitor {
   }
 
   private monitorFetch() {
-    window.fetch = async (...args) => {
+    const wrappedFetch = async (...args: any[]) => {
       const request = this.createRequest(
         args[0] instanceof URL ? args[0].toString() : args[0],
         args[1]?.method || 'GET'
       );
       
       try {
-        const response = await this.originalFetch.apply(window, args);
+        const response = await this.originalFetch.apply(typeof window !== 'undefined' ? window : globalThis, args);
         const clonedResponse = response.clone();
         
         request.status = response.status;
@@ -65,6 +84,10 @@ export class NetworkMonitor {
         throw error;
       }
     };
+
+    // Patch both window and global fetch for test environments
+    (window as any).fetch = wrappedFetch as unknown as typeof fetch;
+    (globalThis as any).fetch = wrappedFetch as unknown as typeof fetch;
   }
 
   private monitorXHR() {
@@ -151,18 +174,20 @@ export class NetworkMonitor {
   private parseHeaders(headers: Headers | string): Record<string, string> {
     if (headers instanceof Headers) {
       const obj: Record<string, string> = {};
-      headers.forEach((value, key) => {
-        obj[key] = value;
+      (headers as any).forEach((value: string, key: string) => {
+        obj[key.toLowerCase()] = value;
       });
       return obj;
     }
 
     if (typeof headers === 'string') {
-      return headers.split('\r\n')
+      return headers.split(/\r?\n/)
         .filter(line => line)
         .reduce((obj, line) => {
           const [key, value] = line.split(': ');
-          obj[key.toLowerCase()] = value;
+          if (key && value !== undefined) {
+            obj[key.toLowerCase()] = value;
+          }
           return obj;
         }, {} as Record<string, string>);
     }
@@ -175,7 +200,7 @@ export class NetworkMonitor {
   }
 
   clearRequests() {
-    this.requests = [];
+    this.requests.length = 0;
   }
 
   onRequest(callback: (request: NetworkRequest) => void) {
@@ -193,7 +218,8 @@ export class NetworkMonitor {
       window.fetch = this.originalFetch;
       window.XMLHttpRequest = this.originalXHR;
     }
+    (globalThis as any).fetch = this.originalFetch;
     this.requestCallbacks = [];
-    this.requests = [];
+    this.requests.length = 0;
   }
 } 
