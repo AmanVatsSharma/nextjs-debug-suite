@@ -53,7 +53,7 @@ export const Tab = styled.button<{ active: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    background: ${({ active, theme }) =>
+  background: ${({ active, theme }) =>
       active ? theme.colors.background : theme.colors.hover};
   }
 `;

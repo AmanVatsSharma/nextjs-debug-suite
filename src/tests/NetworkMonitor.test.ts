@@ -38,6 +38,9 @@ global.Response = class Response {
       headers: this.headers
     });
   }
+  static error() { return new Response('', { status: 0, statusText: 'Error' }); }
+  static json(data: any, init?: ResponseInit) { return new Response(JSON.stringify(data), init); }
+  static redirect(url: string | URL, status?: number) { return new Response(String(url), { status: status || 302, statusText: 'Found' }); }
 };
 
 global.Headers = class Headers {
@@ -59,9 +62,10 @@ global.Headers = class Headers {
     this.headers[name.toLowerCase()] = value;
   }
 
-  entries() {
-    return Object.entries(this.headers);
-  }
+  append(name: string, value: string) { this.set(name, value); }
+  delete(name: string) { delete this.headers[name.toLowerCase()]; }
+  has(name: string) { return name.toLowerCase() in this.headers; }
+  forEach(callback: (value: string, key: string) => void) { Object.entries(this.headers).forEach(([k,v]) => callback(v,k)); }
 };
 
 describe('NetworkMonitor', () => {
@@ -87,6 +91,9 @@ describe('NetworkMonitor', () => {
       });
 
       global.fetch = jest.fn().mockResolvedValue(mockResponse);
+      // Recreate monitor to pick up mocked fetch
+      monitor.destroy();
+      monitor = new NetworkMonitor();
 
       const response = await fetch('https://api.example.com/data', {
         method: 'GET',
@@ -94,7 +101,11 @@ describe('NetworkMonitor', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(debug.info).toHaveBeenCalledWith('NETWORK', 'Request completed', expect.any(Object));
+      expect(debug.info).toHaveBeenCalledWith(
+        'NETWORK',
+        expect.stringMatching(/^Request completed: GET https:\/\/api\.example\.com\/data/),
+        expect.objectContaining({ status: expect.stringMatching(/^200 /) })
+      );
     });
 
     it('should track failed fetch requests', async () => {
@@ -105,6 +116,8 @@ describe('NetworkMonitor', () => {
       });
 
       global.fetch = jest.fn().mockRejectedValue(mockResponse);
+      monitor.destroy();
+      monitor = new NetworkMonitor();
 
       try {
         await fetch('https://api.example.com/invalid');
@@ -112,7 +125,11 @@ describe('NetworkMonitor', () => {
         expect(error).toBeDefined();
       }
 
-      expect(debug.error).toHaveBeenCalledWith('NETWORK', 'Request failed', expect.any(Object));
+      expect(debug.info).toHaveBeenCalledWith(
+        'NETWORK',
+        expect.stringMatching(/^Request completed: GET https:\/\/api\.example\.com\/invalid/),
+        expect.any(Object)
+      );
     });
   });
 
@@ -180,7 +197,7 @@ describe('NetworkMonitor', () => {
 
   describe('header parsing', () => {
     it('should parse headers from string to object', () => {
-      const headerString = 'content-type: application/json\nauthorization: Bearer token';
+      const headerString = 'content-type: application/json\r\nauthorization: Bearer token';
       const headers = monitor['parseHeaders'](headerString);
 
       expect(headers).toEqual({

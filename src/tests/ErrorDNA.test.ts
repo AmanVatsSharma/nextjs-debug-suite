@@ -10,13 +10,13 @@ describe('ErrorDNAGenerator', () => {
   beforeEach(() => {
     mockStackTraceParser = {
       parse: jest.fn(),
-    } as any;
+    } as any as jest.Mocked<StackTraceParser>;
 
     mockDependencyAnalyzer = {
-      analyzeDependencies: jest.fn(),
-    } as any;
+      getDependencyGraph: jest.fn(),
+    } as any as jest.Mocked<DependencyAnalyzer>;
 
-    errorDNA = new ErrorDNAGenerator();
+    errorDNA = new ErrorDNAGenerator(mockStackTraceParser as any, mockDependencyAnalyzer as any);
   });
 
   describe('generateDNA', () => {

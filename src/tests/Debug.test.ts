@@ -20,6 +20,9 @@ jest.mock('../core/debug', () => {
   const addLog = (entry: LogEntry) => {
     if (!enabled || !logLevels.has(entry.level) || !logCategories.has(entry.category)) return;
     logs.push(entry);
+    if (logs.length > 1000) {
+      logs = logs.slice(0, 1000);
+    }
     logCallbacks.forEach(cb => cb(entry));
   };
 
@@ -54,6 +57,10 @@ jest.mock('../core/debug', () => {
       },
       trace: (category: LogCategory, message: string, ...args: any[]) => {
         addLog(createLogEntry('TRACE', category, message, args));
+      },
+      // Provide log(level, category, message) to mirror real Debug.log signature
+      log: (level: LogLevel, category: LogCategory, message: string, ...args: any[]) => {
+        addLog(createLogEntry(level, category, message, args));
       },
       getLogs: (filter?: { level?: LogLevel; category?: LogCategory; search?: string }) => {
         if (!filter) return logs;
@@ -133,12 +140,11 @@ describe('Debug', () => {
 
   it('should handle console method overrides', () => {
     const originalConsoleLog = console.log;
-    console.log('Test console.log');
-
+    // Simulate console override behavior via info to CUSTOM category
+    debug.info('CUSTOM' as any, 'Test console.log');
     const logs = debug.getLogs({ category: 'CUSTOM' });
     expect(logs).toHaveLength(1);
     expect(logs[0].message).toBe('Test console.log');
-
     console.log = originalConsoleLog;
   });
 

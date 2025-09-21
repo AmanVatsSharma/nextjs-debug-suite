@@ -68,7 +68,7 @@ const LogEntry = styled.div<{ type: string }>`
 `;
 
 const Timestamp = styled.span`
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
   margin-right: 8px;
 `;
 

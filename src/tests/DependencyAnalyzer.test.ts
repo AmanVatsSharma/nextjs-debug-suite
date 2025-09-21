@@ -2,27 +2,33 @@ import * as ts from 'typescript';
 import { DependencyAnalyzer } from '../core/errorDNA/dependencyAnalyzer';
 
 // Mock TypeScript module
-jest.mock('typescript', () => ({
-  createSourceFile: jest.fn(),
-  createProgram: jest.fn(() => ({
-    getSourceFile: jest.fn(() => ({
-      getText: jest.fn(() => ''),
+jest.mock('typescript', () => {
+  const actual: any = {};
+  return {
+    createSourceFile: jest.fn(),
+    createProgram: jest.fn(() => ({
+      getSourceFile: jest.fn(() => ({
+        getText: jest.fn(() => ''),
+      })),
     })),
-  })),
-  ScriptTarget: { Latest: 0 },
-  ModuleKind: { ESNext: 0 },
-  JsxEmit: { React: 0 },
-  ModuleResolutionKind: { NodeJs: 0 },
-  readConfigFile: jest.fn(() => ({ config: {} })),
-  parseJsonConfigFileContent: jest.fn(() => ({ options: {} })),
-  sys: { readFile: jest.fn() },
-  isImportDeclaration: jest.fn(),
-  isExportDeclaration: jest.fn(),
-  isExportAssignment: jest.fn(),
-  isNamedImports: jest.fn(),
-  isNamedExports: jest.fn(),
-  forEachChild: jest.fn(),
-}));
+    ScriptTarget: { Latest: 0 },
+    ModuleKind: { ESNext: 0 },
+    JsxEmit: { React: 0 },
+    ModuleResolutionKind: { NodeJs: 0 },
+    readConfigFile: jest.fn(() => ({ config: {} })),
+    parseJsonConfigFileContent: jest.fn(() => ({ options: {} })),
+    sys: { readFile: jest.fn() },
+    // Our analyzer does not call these type guards directly; we simulate traversal
+    isImportDeclaration: jest.fn((node: any) => node.kind === 'ImportDeclaration'),
+    isExportDeclaration: jest.fn((node: any) => node.kind === 'ExportDeclaration'),
+    isExportAssignment: jest.fn((node: any) => node.kind === 'ExportAssignment'),
+    isNamedImports: jest.fn((node: any) => !!node.namedBindings?.elements),
+    isNamedExports: jest.fn((node: any) => !!node.exportClause?.elements),
+    forEachChild: jest.fn((node: any, cb: any) => {
+      if (node.statements) node.statements.forEach(cb);
+    }),
+  };
+});
 
 describe('DependencyAnalyzer', () => {
   let analyzer: DependencyAnalyzer;

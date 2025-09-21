@@ -13,7 +13,7 @@ const Container = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-  background: ${({ theme }) => theme.colors.background.secondary};
+  background: ${({ theme }) => theme.colors.surface};
   border-radius: 8px;
 `;
 
@@ -25,12 +25,12 @@ const Header = styled.div`
 
 const Title = styled.h3`
   margin: 0;
-  color: ${({ theme }) => theme.colors.text.primary};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ErrorLocation = styled.div`
   font-family: monospace;
-  color: ${({ theme }) => theme.colors.text.secondary};
+  color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const CodePreview = styled(motion.div)`
@@ -41,8 +41,8 @@ const CodePreview = styled(motion.div)`
 
 const HighlightedLine = styled.div<{ isError?: boolean }>`
   background: ${({ theme, isError }) => isError 
-    ? theme.colors.error.background 
-    : theme.colors.highlight.background};
+    ? theme.colors.error 
+    : theme.colors.highlight};
   position: absolute;
   left: 0;
   right: 0;
@@ -91,8 +91,8 @@ export const ErrorDNAVisualizer: React.FC<ErrorDNAVisualizerProps> = ({
             margin: 0,
             borderRadius: '4px',
             fontSize: '0.9rem',
-            background: theme.colors.background.primary,
-            color: theme.colors.text.primary,
+            background: theme.colors.background,
+            color: theme.colors.text,
           }}
         >
           {errorDNA.visual.codePreview}
@@ -117,8 +117,8 @@ export const ErrorDNAVisualizer: React.FC<ErrorDNAVisualizerProps> = ({
                   margin: 0,
                   borderRadius: '4px',
                   fontSize: '0.9rem',
-                  background: theme.colors.background.primary,
-                  color: theme.colors.text.primary,
+                  background: theme.colors.background,
+                  color: theme.colors.text,
                 }}
               >
                 {errorDNA.aiAnalysis.suggestedFix}

@@ -2,7 +2,6 @@ import { OpenAIService } from '../ai/openai';
 import type { AIAnalysisRequest } from '../ai/types';
 import type { EnhancedErrorDNA } from '../core/types';
 import '@testing-library/jest-dom';
-import '@types/jest';
 
 // Mock fetch globally
 global.fetch = jest.fn();

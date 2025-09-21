@@ -6,7 +6,7 @@ import type { DependencyGraph } from '../../core/errorDNA/dependencyAnalyzer';
 const Container = styled(motion.div)`
   width: 100%;
   height: 300px;
-  background: ${props => props.theme.colors.background.primary};
+  background: ${props => props.theme.colors.background};
   border-radius: 8px;
   overflow: hidden;
   position: relative;

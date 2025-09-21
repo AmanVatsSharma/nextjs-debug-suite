@@ -8,25 +8,32 @@ describe('PerformanceMonitor', () => {
     jest.clearAllMocks();
     
     // Mock performance API
-    const mockPerformance = {
+    const mockPerformance: any = {
       now: jest.fn(),
       mark: jest.fn(),
       measure: jest.fn(),
       getEntriesByType: jest.fn(),
       clearMarks: jest.fn(),
-      clearMeasures: jest.fn()
+      clearMeasures: jest.fn(),
+      memory: {
+        usedJSHeapSize: 1000000,
+        totalJSHeapSize: 2000000,
+        jsHeapSizeLimit: 4000000,
+      }
     };
     
     global.performance = mockPerformance as any;
     
     // Mock PerformanceObserver
-    global.PerformanceObserver = jest.fn().mockImplementation((callback) => ({
-      observe: jest.fn(),
-      disconnect: jest.fn(),
-      takeRecords: jest.fn(),
-      callback,
-      supportedEntryTypes: ['paint', 'measure', 'navigation']
-    }));
+    global.PerformanceObserver = jest.fn().mockImplementation((callback: any) => {
+      const inst: any = {
+        observe: jest.fn(),
+        disconnect: jest.fn(),
+        takeRecords: jest.fn(),
+        callback,
+      };
+      return inst;
+    });
     
     monitor = new PerformanceMonitor();
   });
@@ -37,7 +44,8 @@ describe('PerformanceMonitor', () => {
 
   describe('performance measurements', () => {
     it('should measure execution time', () => {
-      (performance.now as jest.Mock).mockReturnValueOnce(100).mockReturnValueOnce(150);
+      (performance.now as jest.Mock).mockReturnValueOnce(100);
+      (performance.now as jest.Mock).mockReturnValueOnce(150);
       
       monitor.startMeasure('test');
       const duration = monitor.endMeasure('test');
@@ -58,7 +66,8 @@ describe('PerformanceMonitor', () => {
     it('should track component render times', () => {
       const tracker = monitor.trackComponentRender('TestComponent');
       const performanceNow = performance.now as jest.Mock;
-      performanceNow.mockReturnValueOnce(100).mockReturnValueOnce(200);
+      performanceNow.mockReturnValueOnce(100);
+      performanceNow.mockReturnValueOnce(200);
 
       tracker.mount();
       tracker.unmount();
@@ -97,7 +106,7 @@ describe('PerformanceMonitor', () => {
         }
       ];
 
-      (performance.getEntriesByType as jest.Mock).mockReturnValue(mockResources);
+      (performance.getEntriesByType as unknown as jest.Mock).mockReturnValue(mockResources);
 
       const metrics = await monitor.trackResourceTiming();
       expect(metrics).toEqual([{
@@ -142,10 +151,8 @@ describe('PerformanceMonitor', () => {
       };
 
       // Simulate paint event
-      const observer = mockObserver.mock.results[0].value;
-      observer.observe.mock.calls[0][0].callback({
-        getEntries: () => [mockEntry]
-      });
+      const observer = (mockObserver as any).mock.results[0].value;
+      observer.callback({ getEntries: () => [mockEntry] });
 
       expect(callback).toHaveBeenCalledWith(mockEntry);
 
